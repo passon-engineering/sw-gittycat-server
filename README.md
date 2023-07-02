@@ -1,9 +1,11 @@
 # sw-gittycat-server
 GittyCat, as the name suggests, merges the principles of 'Git', the version control system, and 'Concatenate', reflecting the tool's ability to string together CI/CD pipelines. This open-source, Go-based, self-hosted CI/CD system effectively 'concatenates' your (not only) Git workflows, bringing together a secure and efficient, scalable CI/CD solution.
 
+  ```
  /\_/\  
 (=^.^=)
  > ^ <
+  ```
 
 # STILL UNDER DEVELOPMENT
 
