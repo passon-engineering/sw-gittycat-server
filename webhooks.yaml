@@ -4,4 +4,4 @@ webhooks:
     webhook: "/sw-gittycat-server"
     commands:
       - "git pull"
-      - "go build main.go gittycat-server"
+      - "go build -o gittycat-server main.go"
