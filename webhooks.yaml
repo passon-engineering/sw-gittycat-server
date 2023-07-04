@@ -1,0 +1,7 @@
+webhooks:
+  - repo_url: "git@github.com:passon-engineering/sw-gittycat-server.git"
+    clone_path: "/opt/act/sw-gittycat-server"
+    webhook: "/sw-gittycat-server"
+    commands:
+      - "git pull"
+      - "go build main.go gittycat-server"
