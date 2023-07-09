@@ -3,24 +3,15 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
-	"os/exec"
+	"sw-gittycat-server/modules/git"
+	"sw-gittycat-server/modules/webhooks"
+	"sw-gittycat-server/modules/webserver"
 
-	yaml "gopkg.in/yaml.v3"
+	"github.com/passon-engineering/sw-go-logger-lib/logger"
+	"github.com/passon-engineering/sw-go-utility-lib/networking"
 )
-
-type Webhook struct {
-	RepoURL   string   `yaml:"repo_url"`
-	ClonePath string   `yaml:"clone_path"`
-	Webhook   string   `yaml:"webhook"`
-	Commands  []string `yaml:"commands"`
-}
-
-type Config struct {
-	Webhooks []Webhook `yaml:"webhooks"`
-}
 
 var (
 	configPath string
@@ -33,65 +24,59 @@ func init() {
 	flag.Parse()
 }
 
-func loadConfig() (*Config, error) {
-	bytes, err := ioutil.ReadFile(configPath)
-	if err != nil {
-		return nil, err
-	}
-
-	var config Config
-	err = yaml.Unmarshal(bytes, &config)
-	if err != nil {
-		return nil, err
-	}
-
-	return &config, nil
-}
-
-func cloneRepo(webhook *Webhook) error {
-	cloneCmd := "git clone " + webhook.RepoURL + " " + webhook.ClonePath
-	fmt.Println(cloneCmd)
-	_, err := exec.Command("/bin/sh", "-c", cloneCmd).Output()
-	if err != nil {
-		fmt.Println(err.Error())
-		return err
-	}
-
-	return nil
-}
-
-func getWebhookHandler(webhook *Webhook) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "POST" {
-			fmt.Println("Webhook received: ", webhook.Webhook)
-			for _, command := range webhook.Commands {
-				fullCommand := "cd " + webhook.ClonePath + " && " + command
-				fmt.Println(fullCommand)
-				out, err := exec.Command("/bin/sh", "-c", fullCommand).Output()
-				if err != nil {
-					log.Fatal(err.Error())
-				}
-				fmt.Printf("%s", out)
-			}
-		} else {
-			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		}
-	}
-}
-
 func main() {
-	config, err := loadConfig()
+	appLogger, err := logger.NewLogger(
+		[]logger.LogFormat{
+			logger.FORMAT_TIMESTAMP,
+			logger.FORMAT_STATUS,
+			logger.FORMAT_PRE_TEXT,
+			logger.FORMAT_HTTP_REQUEST,
+			logger.FORMAT_ID,
+			logger.FORMAT_SOURCE,
+			logger.FORMAT_DATA,
+			logger.FORMAT_ERROR,
+			logger.FORMAT_PROCESSING_TIME,
+		}, logger.Options{
+			OutputToStdout:   true,
+			OutputToFile:     true,
+			OutputFolderPath: "/var/log/gittycat/",
+		}, logger.Container{
+			Status: logger.STATUS_INFO,
+			Info:   "System Logger succesfully started! Awaiting logger tasks...",
+		})
 	if err != nil {
-		log.Fatalf("Could not load config: %v", err)
+		log.Fatalf(err.Error())
 	}
 
-	for _, webhook := range config.Webhooks {
-		err := cloneRepo(&webhook)
+	ip, err := networking.GetNetworkExternalIP()
+	if err != nil {
+		appLogger.Entry(logger.Container{
+			Status: logger.STATUS_ERROR,
+			Error:  "Could not get network external IP: " + err.Error(),
+		})
+		log.Fatalf("Could not get network external IP: %v", err)
+	}
+	appLogger.Entry(logger.Container{
+		Status: logger.STATUS_INFO,
+		Info:   "Network external IP: " + ip,
+	})
+
+	webhooks, err := webhooks.LoadWebhooks(configPath)
+	if err != nil {
+		appLogger.Entry(logger.Container{
+			Status: logger.STATUS_ERROR,
+			Error:  "Could not load webhooks: " + err.Error(),
+		})
+		log.Fatalf("Could not load webhooks: %v", err)
+	}
+
+	for _, webhook := range webhooks {
+		err := git.CloneRepo(webhook.RepoURL, webhook.ClonePath)
 		if err != nil {
 			fmt.Println("Could not clone repo: " + webhook.RepoURL + " " + err.Error())
 		}
 
-		http.HandleFunc(webhook.Webhook, getWebhookHandler(&webhook))
+		http.HandleFunc(webhook.Route, webserver.GetWebhookHandler(&webhook))
 	}
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
