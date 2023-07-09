@@ -39,7 +39,7 @@ func main() {
 		}, logger.Options{
 			OutputToStdout:   true,
 			OutputToFile:     true,
-			OutputFolderPath: "/var/log/gittycat/",
+			OutputFolderPath: "/var/log/gittycat-server/",
 		}, logger.Container{
 			Status: logger.STATUS_INFO,
 			Info:   "System Logger succesfully started! Awaiting logger tasks...",
