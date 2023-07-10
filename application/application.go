@@ -16,9 +16,15 @@ type Application struct {
 	Logger     *logger.Logger
 }
 
-func Init(app *Application) error {
+func Init() (*Application, error) {
 	startTime := time.Now()
 	var err error
+
+	app := &Application{
+		ServerPath: filepath.Dir(os.Args[0]),
+		SystemIP:   "",
+		Logger:     &logger.Logger{},
+	}
 
 	//capture global server path
 	app.ServerPath = filepath.Dir(os.Args[0])
@@ -67,5 +73,6 @@ func Init(app *Application) error {
 		Info:           "Basic app framework sucessfully initialized",
 		ProcessingTime: time.Since(startTime),
 	})
-	return nil
+
+	return app, nil
 }

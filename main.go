@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
 	"sw-gittycat-server/application"
 	"sw-gittycat-server/modules/git"
 	"sw-gittycat-server/modules/webhooks"
@@ -27,13 +25,7 @@ func init() {
 }
 
 func main() {
-	app := &application.Application{
-		ServerPath: filepath.Dir(os.Args[0]),
-		SystemIP:   "",
-		Logger:     &logger.Logger{},
-	}
-
-	err := application.Init(app)
+	app, err := application.Init()
 
 	webhooks, err := webhooks.LoadWebhooks(configPath)
 	if err != nil {
