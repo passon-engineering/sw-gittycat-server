@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
+	"sw-gittycat-server/application"
 	"sw-gittycat-server/modules/git"
 	"sw-gittycat-server/modules/webhooks"
 	"sw-gittycat-server/modules/webserver"
 
 	"github.com/passon-engineering/sw-go-logger-lib/logger"
-	"github.com/passon-engineering/sw-go-utility-lib/networking"
 )
 
 var (
@@ -19,51 +21,23 @@ var (
 )
 
 func init() {
-	flag.StringVar(&configPath, "config", "webhooks.yaml", "Path to the config file")
+	flag.StringVar(&configPath, "webhooks", "webhooks.yaml", "Path to the config file")
 	flag.IntVar(&port, "port", 3001, "Port to run the server on")
 	flag.Parse()
 }
 
 func main() {
-	appLogger, err := logger.NewLogger(
-		[]logger.LogFormat{
-			logger.FORMAT_TIMESTAMP,
-			logger.FORMAT_STATUS,
-			logger.FORMAT_PRE_TEXT,
-			logger.FORMAT_HTTP_REQUEST,
-			logger.FORMAT_ID,
-			logger.FORMAT_SOURCE,
-			logger.FORMAT_DATA,
-			logger.FORMAT_ERROR,
-			logger.FORMAT_PROCESSING_TIME,
-		}, logger.Options{
-			OutputToStdout:   true,
-			OutputToFile:     true,
-			OutputFolderPath: "/var/log/gittycat-server/",
-		}, logger.Container{
-			Status: logger.STATUS_INFO,
-			Info:   "System Logger succesfully started! Awaiting logger tasks...",
-		})
-	if err != nil {
-		log.Fatalf(err.Error())
+	app := &application.Application{
+		ServerPath: filepath.Dir(os.Args[0]),
+		SystemIP:   "",
+		Logger:     &logger.Logger{},
 	}
 
-	ip, err := networking.GetNetworkExternalIP()
-	if err != nil {
-		appLogger.Entry(logger.Container{
-			Status: logger.STATUS_ERROR,
-			Error:  "Could not get network external IP: " + err.Error(),
-		})
-		log.Fatalf("Could not get network external IP: %v", err)
-	}
-	appLogger.Entry(logger.Container{
-		Status: logger.STATUS_INFO,
-		Info:   "Network external IP: " + ip,
-	})
+	err := application.Init(app)
 
 	webhooks, err := webhooks.LoadWebhooks(configPath)
 	if err != nil {
-		appLogger.Entry(logger.Container{
+		app.Logger.Entry(logger.Container{
 			Status: logger.STATUS_ERROR,
 			Error:  "Could not load webhooks: " + err.Error(),
 		})
