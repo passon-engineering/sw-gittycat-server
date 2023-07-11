@@ -53,6 +53,12 @@ func Init() (*Application, error) {
 		log.Fatalf(err.Error())
 	}
 
+	appLogger.Entry(logger.Container{
+		Status:         logger.STATUS_INFO,
+		Info:           "Server path: " + app.ServerPath,
+		ProcessingTime: time.Since(startTime),
+	})
+
 	ip, err := networking.GetNetworkExternalIP()
 	if err != nil {
 		appLogger.Entry(logger.Container{

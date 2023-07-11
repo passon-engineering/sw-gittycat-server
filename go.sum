@@ -1,5 +1,5 @@
-github.com/passon-engineering/sw-go-logger-lib v0.2.2 h1:tytMW6Ot0UdcWsUMWf4+PhmIG/ZiWDWl++ABd9lKcQ0=
-github.com/passon-engineering/sw-go-logger-lib v0.2.2/go.mod h1:mGDCo/ng8MctpnghpTSo/3iUOcfo1JcLcE19QaZ7czg=
+github.com/passon-engineering/sw-go-logger-lib v0.3.0 h1:Vn++tLpjbes64MV7knT50GekfxVp9nYhMPIuhvfnJN0=
+github.com/passon-engineering/sw-go-logger-lib v0.3.0/go.mod h1:mGDCo/ng8MctpnghpTSo/3iUOcfo1JcLcE19QaZ7czg=
 github.com/passon-engineering/sw-go-utility-lib v0.0.0 h1:HajTgbQfElv7Ee2esnm6AX0HRAQOMrYNHRhSNe82Jjs=
 github.com/passon-engineering/sw-go-utility-lib v0.0.0/go.mod h1:51CeqECxtTk6N2NGWIxziFdDIepq/uHJS6C3Jl18fAQ=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=

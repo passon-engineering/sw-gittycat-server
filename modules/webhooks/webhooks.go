@@ -7,10 +7,10 @@ import (
 )
 
 type Webhook struct {
-	RepoURL   string   `yaml:"repo_url"`
-	ClonePath string   `yaml:"clone_path"`
-	Route     string   `yaml:"route"`
-	Commands  []string `yaml:"commands"`
+	RepoURL         string   `yaml:"repo_url"`
+	DestinationName string   `yaml:"destination_name"`
+	Route           string   `yaml:"route"`
+	Commands        []string `yaml:"commands"`
 }
 
 type FileContent struct {

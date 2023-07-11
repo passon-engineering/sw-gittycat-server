@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"sw-gittycat-server/application"
+	"sw-gittycat-server/modules/application"
 	"sw-gittycat-server/modules/git"
 	"sw-gittycat-server/modules/webhooks"
 	"sw-gittycat-server/modules/webserver"
@@ -27,7 +27,7 @@ func init() {
 func main() {
 	app, err := application.Init()
 
-	webhooks, err := webhooks.LoadWebhooks(configPath)
+	webhooks, err := webhooks.LoadWebhooks(app.ServerPath + "/modules/" + configPath)
 	if err != nil {
 		app.Logger.Entry(logger.Container{
 			Status: logger.STATUS_ERROR,
@@ -37,7 +37,7 @@ func main() {
 	}
 
 	for _, webhook := range webhooks {
-		err := git.CloneRepo(webhook.RepoURL, webhook.ClonePath)
+		err := git.CloneRepo(webhook.RepoURL, app.ServerPath+"/repositories/"+webhook.DestinationName)
 		if err != nil {
 			fmt.Println("Could not clone repo: " + webhook.RepoURL + " " + err.Error())
 		}

@@ -5,8 +5,8 @@ import (
 	"os/exec"
 )
 
-func CloneRepo(repoUrl string, clonePath string) error {
-	cloneCmd := "git clone " + repoUrl + " " + clonePath
+func CloneRepo(repoUrl string, destinationPath string) error {
+	cloneCmd := "sudo git clone ssh://" + repoUrl + " " + destinationPath
 	fmt.Println(cloneCmd)
 	_, err := exec.Command("/bin/sh", "-c", cloneCmd).Output()
 	if err != nil {
