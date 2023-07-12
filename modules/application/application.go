@@ -1,6 +1,7 @@
 package application
 
 import (
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -16,7 +17,7 @@ type Application struct {
 	Logger     *logger.Logger
 }
 
-func Init() (*Application, error) {
+func Init() *Application {
 	startTime := time.Now()
 	var err error
 
@@ -29,7 +30,7 @@ func Init() (*Application, error) {
 	//capture global server path
 	app.ServerPath = filepath.Dir(os.Args[0])
 
-	appLogger, err := logger.NewLogger(
+	app.Logger, err = logger.NewLogger(
 		[]logger.LogFormat{
 			logger.FORMAT_TIMESTAMP,
 			logger.FORMAT_STATUS,
@@ -50,10 +51,10 @@ func Init() (*Application, error) {
 			Info:   "System Logger succesfully started! Awaiting logger tasks...",
 		})
 	if err != nil {
-		log.Fatalf(err.Error())
+		log.Fatalf("Could not initialize logger: %v", err)
 	}
 
-	appLogger.Entry(logger.Container{
+	app.Logger.Entry(logger.Container{
 		Status:         logger.STATUS_INFO,
 		Info:           "Server path: " + app.ServerPath,
 		ProcessingTime: time.Since(startTime),
@@ -61,24 +62,64 @@ func Init() (*Application, error) {
 
 	ip, err := networking.GetNetworkExternalIP()
 	if err != nil {
-		appLogger.Entry(logger.Container{
+		app.Logger.Entry(logger.Container{
 			Status: logger.STATUS_ERROR,
 			Error:  "Could not get network external IP: " + err.Error(),
 		})
-		log.Fatalf("Could not get network external IP: %v", err)
+		os.Exit(1)
 	}
-	appLogger.Entry(logger.Container{
+	app.Logger.Entry(logger.Container{
 		Status: logger.STATUS_INFO,
 		Info:   "Network external IP: " + ip,
 	})
 
 	app.SystemIP = ip
 
-	appLogger.Entry(logger.Container{
+	publicSshKey, err := getUserSshPublicKey()
+	if err != nil {
+		app.Logger.Entry(logger.Container{
+			Status: logger.STATUS_ERROR,
+			Error:  "Could not read user public SSH key: " + err.Error(),
+		})
+		os.Exit(1)
+	} else {
+		app.Logger.Entry(logger.Container{
+			Status: logger.STATUS_INFO,
+			Info:   "User public SSH key:",
+		})
+		app.Logger.Entry(logger.Container{
+			Status: logger.STATUS_INFO,
+			Info:   string(publicSshKey),
+		})
+	}
+
+	app.Logger.Entry(logger.Container{
 		Status:         logger.STATUS_INFO,
 		Info:           "Basic app framework sucessfully initialized",
 		ProcessingTime: time.Since(startTime),
 	})
 
-	return app, nil
+	if err != nil {
+		log.Fatalf("Could not initialize app! %v", err)
+	}
+
+	return app
+}
+
+func getUserSshPublicKey() ([]byte, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		// Unable to get user's home directory
+		return nil, err
+	}
+
+	keyPath := filepath.Join(homeDir, ".ssh", "id_rsa.pub")
+
+	keyData, err := ioutil.ReadFile(keyPath)
+	if err != nil {
+		// Unable to read file
+		return nil, err
+	}
+
+	return keyData, nil
 }

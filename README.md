@@ -35,5 +35,39 @@ One of the key focus of GittyCat is its cloning from virtually any service that 
 | Docker integration |  | 🟡 |  |
 | OAuth  |  | 🟡 |  |
 
+## Usage
 
-... More information soon!
+1. Clone this repository to the path you want to operate your gittycat-server instance. A good place could be the `/opt/` folder since this software will have it's own specific structure. So navigate to `/opt/`
+  ```
+  cd /opt
+  ```
+And now clone this repository
+  ```
+  git clone https://github.com/passon-engineering/sw-gittycat-server.git
+  ```
+
+2. Navigate to the cloned repository
+  ```
+  cd sw-gittycat-server
+  ```
+  and build the project to create the binary (make sure you use go >1.20)
+  ```
+  go build -o gittycat-server main.go
+  ```
+
+3. Before you start the application, make sure that if you try to access private repositories the server has your public SSH key. If you need to create the key follow the steps:
+
+  Since this SW needs root permision, switch to the super user
+  ```
+  sudo su -
+  ```
+  or (depending on your system)
+  ```
+  su -
+  ```
+  Now create the keys (never share your private key!)
+  ```
+  ssh-keygen -t rsa -b 4096 -C "youremail@example.com"
+  ```
+  Read the content and add it to your trusted keys
+  cat ~/.ssh/id_rsa.pub
