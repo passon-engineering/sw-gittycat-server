@@ -70,4 +70,6 @@ And now clone this repository
   ssh-keygen -t rsa -b 4096 -C "youremail@example.com"
   ```
   Read the content and add it to your trusted keys
+  ```
   cat ~/.ssh/id_rsa.pub
+  ```
