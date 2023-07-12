@@ -3,11 +3,11 @@ webhooks:
     repo_name: "sw-gittycat-server"
     route: "/sw-gittycat-server"
     commands:
-      - "echo Webhook actived!"
+      - "echo Webhook for sw-gittycat-server actived!"
       - "git pull"
   - repo_url: "git@github.com:passon-engineering/sw-go-logger-lib.git"
     repo_name: "sw-go-logger-lib"
     route: "/sw-go-logger-lib"
     commands:
-      - "echo Webhook actived!"
+      - "echo Webhook for sw-go-logger-lib actived!"
       - "git pull"

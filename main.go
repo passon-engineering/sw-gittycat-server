@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -28,9 +29,14 @@ func main() {
 
 	for _, webhook := range webhooks {
 		git.CloneRepo(webhook.RepoURL, webhook.RepoName, app)
-		http.HandleFunc(webhook.Route, webserver.GetWebhookHandler(&webhook))
+		http.HandleFunc(webhook.Route, webserver.GetWebhookHandler(webhook))
 	}
-	git.DeleteAllRepositories(app)
+
+	http.HandleFunc("/webhooks", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(webhooks)
+	})
+	//git.DeleteAllRepositories(app)
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 
