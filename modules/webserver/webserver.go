@@ -2,6 +2,7 @@ package webserver
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -25,7 +26,7 @@ func Init(app *application.Application) {
 		ReadTimeout:  10 * time.Second,
 	}
 
-	router.HandleFunc("/all_available_webhooks", func(w http.ResponseWriter, r *http.Request) {
+	router.HandleFunc("/webhooks", func(w http.ResponseWriter, r *http.Request) {
 		startTime := time.Now()
 		w.Header().Set("Content-Type", "application/json")
 		app.WebhookHandler.Refresh()
@@ -36,11 +37,9 @@ func Init(app *application.Application) {
 			HttpRequest:    r,
 			ProcessingTime: time.Since(startTime),
 		})
-	})
+	}).Methods("GET")
 
-	router.HandleFunc("/webhooks/{key}", func(w http.ResponseWriter, r *http.Request) {
-
-	})
+	router.HandleFunc("/webhooks/{repo_name}/{action}", handleWebhookAction(app))
 
 	err := server.ListenAndServe()
 	if err != nil {
@@ -56,21 +55,57 @@ func Init(app *application.Application) {
 
 func root(app *application.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
+		startTime := time.Now()
 
 		path := r.URL.Path[1:]
 		if path == "" {
 			http.Redirect(w, r, "/index.html", http.StatusSeeOther)
 
 			app.Logger.Entry(logger.Container{
+				Status:         logger.STATUS_INFO,
 				Source:         "root_redirect",
 				HttpRequest:    r,
-				ProcessingTime: time.Since(start),
+				ProcessingTime: time.Since(startTime),
 			})
 			return
 		}
 
 		web.ServeStaticFile(w, r, "frontend/dist/"+path)
 
+	}
+}
+
+func handleWebhookAction(app *application.Application) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		startTime := time.Now()
+		vars := mux.Vars(r)
+		repoName := vars["repo_name"]
+		action := vars["action"]
+
+		_, exists := app.WebhookHandler.Webhooks[repoName]
+		if !exists {
+			http.Error(w, "Repo not found", http.StatusNotFound)
+			app.Logger.Entry(logger.Container{
+				Status:         logger.STATUS_INFO,
+				Info:           "Repo not found",
+				HttpRequest:    r,
+				ProcessingTime: time.Since(startTime),
+			})
+			return
+		}
+
+		switch action {
+		case "delete":
+			// handle delete
+			fmt.Fprintf(w, "Deleting repo: %s\n", repoName)
+		case "add":
+			// handle add
+			fmt.Fprintf(w, "Adding repo: %s\n", repoName)
+		case "run":
+			// handle run
+			fmt.Fprintf(w, "Running repo: %s\n", repoName)
+		default:
+			http.Error(w, "Invalid action", http.StatusBadRequest)
+		}
 	}
 }

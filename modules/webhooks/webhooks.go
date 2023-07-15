@@ -58,7 +58,7 @@ func (handler *WebhookHandler) Refresh() error {
 			if err != nil {
 				return fmt.Errorf("error loading webhook from %s: %w", file.Name(), err)
 			}
-			handler.Webhooks[webhook.Route] = webhook
+			handler.Webhooks[webhook.RepoName] = webhook
 		}
 	}
 
