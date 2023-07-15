@@ -1,46 +1,76 @@
 package webserver
 
 import (
-	"fmt"
-	"log"
+	"encoding/json"
 	"net/http"
 	"os"
-	"os/exec"
-	"runtime"
+	"time"
 
-	"sw-gittycat-server/modules/webhooks"
+	"sw-gittycat-server/modules/application"
+
+	"github.com/gorilla/mux"
+	"github.com/passon-engineering/sw-go-logger-lib/logger"
+	"github.com/passon-engineering/sw-go-utility-lib/web"
 )
 
-func GetWebhookHandler(webhook webhooks.Webhook) http.HandlerFunc {
+func Init(app *application.Application) {
+	router := mux.NewRouter()
+
+	router.NotFoundHandler = http.HandlerFunc(root(app))
+
+	server := http.Server{
+		Handler:      router,
+		Addr:         ":" + app.Config.HttpPort,
+		WriteTimeout: 10 * time.Second,
+		ReadTimeout:  10 * time.Second,
+	}
+
+	router.HandleFunc("/all_available_webhooks", func(w http.ResponseWriter, r *http.Request) {
+		startTime := time.Now()
+		w.Header().Set("Content-Type", "application/json")
+		app.WebhookHandler.Refresh()
+		json.NewEncoder(w).Encode(app.WebhookHandler.Webhooks)
+		app.Logger.Entry(logger.Container{
+			Status:         logger.STATUS_INFO,
+			Info:           "Refreshed and listed available webhooks",
+			HttpRequest:    r,
+			ProcessingTime: time.Since(startTime),
+		})
+	})
+
+	router.HandleFunc("/webhooks/{key}", func(w http.ResponseWriter, r *http.Request) {
+
+	})
+
+	err := server.ListenAndServe()
+	if err != nil {
+		app.Logger.Entry(logger.Container{
+			Status: logger.STATUS_ERROR,
+			Error:  "Could not initialize http server: " + err.Error(),
+		})
+		time.Sleep(2 * time.Second)
+		os.Exit(1)
+	}
+
+}
+
+func root(app *application.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
-			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+		start := time.Now()
+
+		path := r.URL.Path[1:]
+		if path == "" {
+			http.Redirect(w, r, "/index.html", http.StatusSeeOther)
+
+			app.Logger.Entry(logger.Container{
+				Source:         "root_redirect",
+				HttpRequest:    r,
+				ProcessingTime: time.Since(start),
+			})
 			return
 		}
 
-		for _, cmd := range webhook.Commands {
-			runCommand(cmd)
-		}
+		web.ServeStaticFile(w, r, "frontend/dist/"+path)
 
-		fmt.Fprintf(w, "Webhook %s executed successfully!", webhook.RepoName)
-	}
-}
-
-func runCommand(cmdLine string) {
-	var cmd *exec.Cmd
-	if runtime.GOOS == "windows" {
-		cmd = exec.Command("cmd", "/C", cmdLine)
-	} else {
-		cmd = exec.Command("/bin/sh", "-c", cmdLine)
-	}
-
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	if err := cmd.Run(); err != nil {
-		log.Printf("Command failed: %s", cmdLine)
-		log.Printf("Error: %s", err)
-	} else {
-		log.Printf("Command executed successfully: %s", cmdLine)
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sw-gittycat-server/modules/webhooks"
 	"time"
 
 	"github.com/passon-engineering/sw-go-logger-lib/logger"
@@ -12,9 +13,16 @@ import (
 )
 
 type Application struct {
-	ServerPath string
-	SystemIP   string
-	Logger     *logger.Logger
+	ServerPath     string
+	SystemIP       string
+	Logger         *logger.Logger
+	WebhookHandler *webhooks.WebhookHandler
+	Config         Config
+}
+
+type Config struct {
+	HttpPort     string
+	WebDirectory string
 }
 
 func Init() *Application {
@@ -45,7 +53,7 @@ func Init() *Application {
 		}, logger.Options{
 			OutputToStdout:   true,
 			OutputToFile:     true,
-			OutputFolderPath: "/var/log/gittycat-server/",
+			OutputFolderPath: app.ServerPath + "/logs/",
 		}, logger.Container{
 			Status: logger.STATUS_INFO,
 			Info:   "System Logger succesfully started! Awaiting logger tasks...",

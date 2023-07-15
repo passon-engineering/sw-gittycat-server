@@ -1,0 +1,7 @@
+repo_url: "git@github.com:passon-engineering/sw-gittycat-server.git"
+repo_name: "sw-gittycat-server"
+route: "/sw-gittycat-server"
+commands: 
+  - "git pull"
+last_call: ""
+processing_time: ""

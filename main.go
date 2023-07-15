@@ -1,15 +1,15 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
-	"fmt"
-	"log"
-	"net/http"
+	"strconv"
 	"sw-gittycat-server/modules/application"
 	"sw-gittycat-server/modules/git"
 	"sw-gittycat-server/modules/webhooks"
 	"sw-gittycat-server/modules/webserver"
+	"time"
+
+	"github.com/passon-engineering/sw-go-logger-lib/logger"
 )
 
 var (
@@ -25,19 +25,40 @@ func init() {
 
 func main() {
 	app := application.Init()
-	webhooks := webhooks.LoadWebhooks(webhookDefinitionFilePath, app)
 
-	for _, webhook := range webhooks {
-		git.CloneRepo(webhook.RepoURL, webhook.RepoName, app)
-		http.HandleFunc(webhook.Route, webserver.GetWebhookHandler(webhook))
+	var err error
+
+	app.WebhookHandler, err = webhooks.NewWebhookHandler(app.ServerPath + "/webhooks/")
+	if err != nil {
+		startTime := time.Now()
+		app.Logger.Entry(logger.Container{
+			Status:         logger.STATUS_ERROR,
+			Error:          "Could not initialize list of webhooks " + err.Error(),
+			ProcessingTime: time.Since(startTime),
+		})
+	} else {
+		startTime := time.Now()
+		app.Logger.Entry(logger.Container{
+			Status:         logger.STATUS_INFO,
+			Info:           "Initialized list of webhooks:",
+			ProcessingTime: time.Since(startTime),
+		})
+		for _, webhook := range app.WebhookHandler.Webhooks {
+			app.Logger.Entry(logger.Container{
+				Status: logger.STATUS_INFO,
+				Info:   webhook.RepoName + " listening to: " + webhook.Route,
+			})
+		}
 	}
 
-	http.HandleFunc("/webhooks", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(webhooks)
-	})
-	//git.DeleteAllRepositories(app)
+	for _, webhook := range app.WebhookHandler.Webhooks {
+		git.CloneRepo(webhook.RepoURL, webhook.RepoName, app)
+	}
 
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
+	app.Config.HttpPort = strconv.Itoa(port)
+	app.Config.WebDirectory = "/frontend/dist/"
+	webserver.Init(app)
+
+	//git.DeleteAllRepositories(app)
 
 }
