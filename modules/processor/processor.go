@@ -24,11 +24,13 @@ func processWebhookQueue(action webhooks.WebhookAction, app *application.Applica
 
 	switch action.Action {
 	case "delete":
-		// handle delete
-		fmt.Println("Deleting " + action.Webhook.RepoName)
+		// handle add
+		// Possible future implementation placeholder
+		return
 	case "add":
 		// handle add
-		fmt.Println("Adding " + action.Webhook.RepoName)
+		// Possible future implementation placeholder
+		return
 	case "run":
 		// handle run
 		git.PullRepo(action.Webhook.RepoName, app)
