@@ -18,6 +18,7 @@ type Application struct {
 	Logger         *logger.Logger
 	WebhookHandler *webhooks.WebhookHandler
 	Config         Config
+	Queue          chan webhooks.WebhookAction
 }
 
 type Config struct {
@@ -33,6 +34,7 @@ func Init() *Application {
 		ServerPath: filepath.Dir(os.Args[0]),
 		SystemIP:   "",
 		Logger:     &logger.Logger{},
+		Queue:      make(chan webhooks.WebhookAction, 100),
 	}
 
 	//capture global server path

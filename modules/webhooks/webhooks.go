@@ -1,17 +1,14 @@
 package webhooks
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
-	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"sync"
 
+	"github.com/passon-engineering/sw-go-utility-lib/system"
 	"gopkg.in/yaml.v3"
 )
 
@@ -30,6 +27,12 @@ type WebhookHandler struct {
 	sync.Mutex
 }
 
+type WebhookAction struct {
+	Webhook     *Webhook
+	Action      string
+	RequestBody map[string]interface{}
+}
+
 func NewWebhookHandler(directory string) (*WebhookHandler, error) {
 	handler := &WebhookHandler{Directory: directory, Webhooks: make(map[string]*Webhook)}
 	err := handler.Refresh()
@@ -44,7 +47,7 @@ func (handler *WebhookHandler) Refresh() error {
 	handler.Lock()
 	defer handler.Unlock()
 
-	files, err := ioutil.ReadDir(handler.Directory)
+	files, err := os.ReadDir(handler.Directory)
 	if err != nil {
 		return fmt.Errorf("error reading directory: %w", err)
 	}
@@ -66,7 +69,7 @@ func (handler *WebhookHandler) Refresh() error {
 }
 
 func loadWebhook(filePath string) (*Webhook, error) {
-	bytes, err := ioutil.ReadFile(filePath)
+	bytes, err := os.ReadFile(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("error reading webhook file: %w", err)
 	}
@@ -149,7 +152,7 @@ func (handler *WebhookHandler) Add(webhook *Webhook) error {
 
 func (webhook *Webhook) RunCommands(handleCommand func(command string, output string, err error)) {
 	for _, command := range webhook.Commands {
-		output, err := runCommand(command)
+		output, err := system.RunCommand(command)
 		handleCommand(command, output, err)
 	}
 }
@@ -160,25 +163,5 @@ func saveWebhook(filePath string, webhook *Webhook) error {
 		return err
 	}
 
-	return ioutil.WriteFile(filePath, data, 0644)
-}
-
-func runCommand(cmdLine string) (string, error) {
-	var cmd *exec.Cmd
-	if runtime.GOOS == "windows" {
-		cmd = exec.Command("cmd", "/C", cmdLine)
-	} else {
-		cmd = exec.Command("/bin/sh", "-c", cmdLine)
-	}
-
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	err := cmd.Run()
-	if err != nil {
-		return "", fmt.Errorf("command failed: %s, error: %s, stderr: %s", cmdLine, err, stderr.String())
-	} else {
-		return stdout.String(), nil
-	}
+	return os.WriteFile(filePath, data, 0644)
 }

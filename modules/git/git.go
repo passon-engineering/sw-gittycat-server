@@ -7,6 +7,7 @@ import (
 
 	"github.com/passon-engineering/sw-go-logger-lib/logger"
 	"github.com/passon-engineering/sw-go-utility-lib/file"
+	"github.com/passon-engineering/sw-go-utility-lib/system"
 )
 
 const (
@@ -40,6 +41,29 @@ func CloneRepo(repoUrl string, repoName string, app *application.Application) {
 	}
 
 	app.Logger.Entry(logEntry)
+}
+
+func PullRepo(repoName string, app *application.Application) {
+	startTime := time.Now()
+
+	destinationPath := app.ServerPath + "/repositories/" + repoName
+	pullCmd := "cd " + destinationPath + " && git pull"
+
+	output, err := system.RunCommand(pullCmd)
+
+	if err != nil {
+		app.Logger.Entry(logger.Container{
+			Status:         logger.STATUS_ERROR,
+			Error:          "Could not pull repository " + string(output) + " " + err.Error(),
+			ProcessingTime: time.Since(startTime),
+		})
+		return
+	}
+	app.Logger.Entry(logger.Container{
+		Status:         logger.STATUS_INFO,
+		Info:           "Pulled repository: " + repoName,
+		ProcessingTime: time.Since(startTime),
+	})
 }
 
 func DeleteAllRepositories(app *application.Application) {

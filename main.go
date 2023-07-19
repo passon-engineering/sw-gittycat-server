@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"sw-gittycat-server/modules/application"
 	"sw-gittycat-server/modules/git"
+	"sw-gittycat-server/modules/processor"
 	"sw-gittycat-server/modules/webhooks"
 	"sw-gittycat-server/modules/webserver"
 	"time"
@@ -54,6 +55,8 @@ func main() {
 	for _, webhook := range app.WebhookHandler.Webhooks {
 		git.CloneRepo(webhook.RepoURL, webhook.RepoName, app)
 	}
+
+	processor.Init(app)
 
 	app.Config.HttpPort = strconv.Itoa(port)
 	app.Config.WebDirectory = "/frontend/dist/"

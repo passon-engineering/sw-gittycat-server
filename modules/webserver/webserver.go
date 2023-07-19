@@ -3,11 +3,13 @@ package webserver
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"time"
 
 	"sw-gittycat-server/modules/application"
+	"sw-gittycat-server/modules/webhooks"
 
 	"github.com/gorilla/mux"
 	"github.com/passon-engineering/sw-go-logger-lib/logger"
@@ -75,14 +77,14 @@ func root(app *application.Application) http.HandlerFunc {
 	}
 }
 
-func handleWebhookAction(app *application.Application) func(w http.ResponseWriter, r *http.Request) {
+func handleWebhookAction(app *application.Application) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		startTime := time.Now()
 		vars := mux.Vars(r)
 		repoName := vars["repo_name"]
 		action := vars["action"]
 
-		_, exists := app.WebhookHandler.Webhooks[repoName]
+		webhook, exists := app.WebhookHandler.Webhooks[repoName]
 		if !exists {
 			http.Error(w, "Repo not found", http.StatusNotFound)
 			app.Logger.Entry(logger.Container{
@@ -94,18 +96,33 @@ func handleWebhookAction(app *application.Application) func(w http.ResponseWrite
 			return
 		}
 
-		switch action {
-		case "delete":
-			// handle delete
-			fmt.Fprintf(w, "Deleting repo: %s\n", repoName)
-		case "add":
-			// handle add
-			fmt.Fprintf(w, "Adding repo: %s\n", repoName)
-		case "run":
-			// handle run
-			fmt.Fprintf(w, "Running repo: %s\n", repoName)
-		default:
-			http.Error(w, "Invalid action", http.StatusBadRequest)
+		// Read the request body
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			// Handle the error
+			// You can return an error response or take appropriate action
+			fmt.Println("Error reading request body:", err.Error())
+			return
 		}
+
+		// Parse the request body into a map[string]interface{}
+		var requestBody map[string]interface{}
+		err = json.Unmarshal(body, &requestBody)
+		if err != nil {
+			// Handle the error
+			// You can return an error response or take appropriate action
+			fmt.Println("Error parsing request body:", err.Error())
+			requestBody = nil
+		}
+
+		// Add the webhook action to the queue
+		app.Queue <- webhooks.WebhookAction{Webhook: webhook, Action: action, RequestBody: requestBody}
+
+		app.Logger.Entry(logger.Container{
+			Status:         logger.STATUS_INFO,
+			Info:           "Webhook: ",
+			HttpRequest:    r,
+			ProcessingTime: time.Since(startTime),
+		})
 	}
 }
