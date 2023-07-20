@@ -3,4 +3,4 @@ repo_name: sw-gittycat-server
 route: /sw-gittycat-server/run
 active: true
 commands:
-    - git pull
+    - echo new webhook

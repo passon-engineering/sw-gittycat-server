@@ -21,40 +21,24 @@ func Init(app *application.Application) {
 func processWebhookQueue(action webhooks.WebhookAction, app *application.Application) {
 	startTime := time.Now()
 
-	switch action.Action {
-	case "delete":
-		// handle add
-		// Possible future implementation placeholder
-		return
-	case "add":
-		// handle add
-		// Possible future implementation placeholder
-		return
-	case "run":
-		// handle run
-		git.PullRepo(action.Webhook.RepoName, app)
-		commandHandler := func(command string, output string, err error) {
-			if err != nil {
-				output := fmt.Sprintf("'%s': Command '%s' failed: %v", action.Webhook.RepoName, command, err)
-				app.Logger.Entry(logger.Container{
-					Status:         logger.STATUS_ERROR,
-					Error:          output,
-					ProcessingTime: time.Since(startTime),
-				})
-			} else {
-				output := fmt.Sprintf("'%s': Command '%s' executed successfully, output: %s", action.Webhook.RepoName, command, output)
-				app.Logger.Entry(logger.Container{
-					Status:         logger.STATUS_INFO,
-					Info:           output,
-					ProcessingTime: time.Since(startTime),
-				})
-			}
+	git.PullRepo(action.Webhook.RepoName, app)
+	commandHandler := func(command string, output string, err error) {
+		if err != nil {
+			output := fmt.Sprintf("'%s': Command '%s' failed: %v", action.Webhook.RepoName, command, err)
+			app.Logger.Entry(logger.Container{
+				Status:         logger.STATUS_ERROR,
+				Error:          output,
+				ProcessingTime: time.Since(startTime),
+			})
+		} else {
+			output := fmt.Sprintf("'%s': Command '%s' executed successfully, output: %s", action.Webhook.RepoName, command, output)
+			app.Logger.Entry(logger.Container{
+				Status:         logger.STATUS_INFO,
+				Info:           output,
+				ProcessingTime: time.Since(startTime),
+			})
 		}
-
-		action.Webhook.RunCommands(commandHandler)
-	default:
-		fmt.Println("Action not found " + action.Action)
 	}
 
-	fmt.Printf("Processing webhook action: repo = %s, action = %s\n", action.Webhook.RepoName, action.Action)
+	action.Webhook.RunCommands(commandHandler)
 }

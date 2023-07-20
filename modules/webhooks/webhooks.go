@@ -28,7 +28,7 @@ type WebhookHandler struct {
 
 type WebhookAction struct {
 	Webhook        *Webhook               `yaml:"webhook" json:"webhook"`
-	Action         string                 `yaml:"action" json:"action"`
+	Success        bool                   `yaml:"success" json:"success"`
 	RequestBody    map[string]interface{} `yaml:"request_body" json:"request_body"`
 	LastCall       string                 `yaml:"last_call" json:"last_call"`
 	ProcessingTime string                 `yaml:"processing_time" json:"processing_time"`
