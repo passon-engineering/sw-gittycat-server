@@ -12,7 +12,6 @@ import (
 
 func Init(app *application.Application) {
 	go func() {
-		fmt.Println("TEST")
 		for action := range app.Queue {
 			processWebhookQueue(action, app)
 		}
@@ -38,20 +37,21 @@ func processWebhookQueue(action webhooks.WebhookAction, app *application.Applica
 			if err != nil {
 				output := fmt.Sprintf("'%s': Command '%s' failed: %v", action.Webhook.RepoName, command, err)
 				app.Logger.Entry(logger.Container{
-					Status: logger.STATUS_ERROR,
-					Error:  output,
+					Status:         logger.STATUS_ERROR,
+					Error:          output,
+					ProcessingTime: time.Since(startTime),
 				})
 			} else {
 				output := fmt.Sprintf("'%s': Command '%s' executed successfully, output: %s", action.Webhook.RepoName, command, output)
 				app.Logger.Entry(logger.Container{
-					Status: logger.STATUS_INFO,
-					Info:   output,
+					Status:         logger.STATUS_INFO,
+					Info:           output,
+					ProcessingTime: time.Since(startTime),
 				})
 			}
 		}
 
 		action.Webhook.RunCommands(commandHandler)
-		app.WebhookHandler.UpdateLastCall(action.Webhook.RepoName, string(startTime.Format(time.RFC3339)))
 	default:
 		fmt.Println("Action not found " + action.Action)
 	}

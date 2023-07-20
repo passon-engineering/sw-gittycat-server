@@ -13,12 +13,11 @@ import (
 )
 
 type Webhook struct {
-	RepoURL        string   `yaml:"repo_url" json:"repo_url"`
-	RepoName       string   `yaml:"repo_name" json:"repo_name"`
-	Route          string   `yaml:"route" json:"route"`
-	Commands       []string `yaml:"commands" json:"commands"`
-	LastCall       string   `yaml:"last_call" json:"last_call"`
-	ProcessingTime string   `yaml:"processing_time" json:"processing_time"`
+	RepoURL  string   `yaml:"repo_url" json:"repo_url"`
+	RepoName string   `yaml:"repo_name" json:"repo_name"`
+	Route    string   `yaml:"route" json:"route"`
+	Active   bool     `yaml:"active" json:"active"`
+	Commands []string `yaml:"commands" json:"commands"`
 }
 
 type WebhookHandler struct {
@@ -28,14 +27,16 @@ type WebhookHandler struct {
 }
 
 type WebhookAction struct {
-	Webhook     *Webhook
-	Action      string
-	RequestBody map[string]interface{}
+	Webhook        *Webhook               `yaml:"webhook" json:"webhook"`
+	Action         string                 `yaml:"action" json:"action"`
+	RequestBody    map[string]interface{} `yaml:"request_body" json:"request_body"`
+	LastCall       string                 `yaml:"last_call" json:"last_call"`
+	ProcessingTime string                 `yaml:"processing_time" json:"processing_time"`
 }
 
 func NewWebhookHandler(directory string) (*WebhookHandler, error) {
 	handler := &WebhookHandler{Directory: directory, Webhooks: make(map[string]*Webhook)}
-	err := handler.Refresh()
+	err := handler.Reload()
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +44,7 @@ func NewWebhookHandler(directory string) (*WebhookHandler, error) {
 	return handler, nil
 }
 
-func (handler *WebhookHandler) Refresh() error {
+func (handler *WebhookHandler) Reload() error {
 	handler.Lock()
 	defer handler.Unlock()
 
@@ -103,34 +104,6 @@ func (handler *WebhookHandler) Delete(route string) error {
 	return nil
 }
 
-func (handler *WebhookHandler) UpdateLastCall(route string, lastCall string) error {
-	handler.Lock()
-	defer handler.Unlock()
-
-	webhook, ok := handler.Webhooks[route]
-	if !ok {
-		return errors.New("webhook not found")
-	}
-
-	webhook.LastCall = lastCall
-	filePath := filepath.Join(handler.Directory, route+".yaml")
-	return saveWebhook(filePath, webhook)
-}
-
-func (handler *WebhookHandler) UpdateProcessingTime(route string, processingTime string) error {
-	handler.Lock()
-	defer handler.Unlock()
-
-	webhook, ok := handler.Webhooks[route]
-	if !ok {
-		return errors.New("webhook not found")
-	}
-
-	webhook.ProcessingTime = processingTime
-	filePath := filepath.Join(handler.Directory, route+".yaml")
-	return saveWebhook(filePath, webhook)
-}
-
 func (handler *WebhookHandler) Add(webhook *Webhook) error {
 	handler.Lock()
 	defer handler.Unlock()
@@ -148,6 +121,20 @@ func (handler *WebhookHandler) Add(webhook *Webhook) error {
 
 	handler.Webhooks[webhook.Route] = webhook
 	return nil
+}
+
+func (handler *WebhookHandler) UpdateActive(route string, status bool) error {
+	handler.Lock()
+	defer handler.Unlock()
+
+	webhook, ok := handler.Webhooks[route]
+	if !ok {
+		return errors.New("webhook not found")
+	}
+
+	webhook.Active = status
+	filePath := filepath.Join(handler.Directory, route+".yaml")
+	return saveWebhook(filePath, webhook)
 }
 
 func (webhook *Webhook) RunCommands(handleCommand func(command string, output string, err error)) {

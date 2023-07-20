@@ -1,60 +1,57 @@
 <template>
-  <div id="app">
-    <h1>Active Webhooks</h1>
-    <div v-for="webhook in webhooks" :key="webhook.route" class="webhook">
-      <h2>{{ webhook.repoName }}</h2>
-      <p><strong>Repo URL:</strong> {{ webhook.repoURL }}</p>
-      <p><strong>Route:</strong> {{ webhook.route }}</p>
-      <ul>
-        <li v-for="command in webhook.commands" :key="command">
-          {{ command }}
-        </li>
-      </ul>
-    </div>
+  <div id="app" class="container">
+    <img src="@/assets/logo.png" alt="Logo" class="logo">
+    <webhook-table :webhooks="webhooks" @toggleActive="toggleActive" />
   </div>
 </template>
 
 <script>
+import { ref, onMounted } from 'vue'
+import WebhookTable from './components/WebhookTable.vue'
+import axios from 'axios'
+
 export default {
-  data() {
+  name: 'App',
+  components: {
+    WebhookTable
+  },
+  setup() {
+    const webhooks = ref({})
+
+    const fetchWebhooks = async () => {
+      const response = await axios.get('/webhooks')
+      webhooks.value = response.data
+    }
+
+    onMounted(fetchWebhooks)
+
+    const toggleActive = async (repo_name) => {
+      await axios.get(`/webhooks/${repo_name}/toggle_active`)
+      await axios.get(`/webhooks/refresh`)
+      await fetchWebhooks()
+    }
+
     return {
-      webhooks: [],
-    };
-  },
-  created() {
-    this.fetchWebhooks();
-  },
-  methods: {
-    async fetchWebhooks() {
-      try {
-        const res = await fetch('/webhooks');
-        this.webhooks = await res.json();
-      } catch (err) {
-        console.error(err);
-      }
-    },
-  },
-};
+      webhooks,
+      toggleActive
+    }
+  }
+}
 </script>
 
-<style scoped>
-.webhook {
-  background-color: #f9f9f9;
-  margin-bottom: 1em;
-  padding: 1em;
-  border-radius: 4px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+<style>
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
-.webhook h2 {
-  margin: 0;
-  color: #333;
-}
-.webhook p {
-  margin: 0.5em 0;
-  color: #666;
-}
-.webhook ul {
-  margin-top: 0.5em;
-  padding-left: 1em;
+
+.logo {
+  display: block;
+  width: 200px; 
+  height: auto; 
+  margin: 0 auto 20px;
 }
 </style>

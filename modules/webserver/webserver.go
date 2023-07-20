@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"sw-gittycat-server/modules/application"
@@ -19,8 +20,6 @@ import (
 func Init(app *application.Application) {
 	router := mux.NewRouter()
 
-	router.NotFoundHandler = http.HandlerFunc(root(app))
-
 	server := http.Server{
 		Handler:      router,
 		Addr:         ":" + app.Config.HttpPort,
@@ -28,20 +27,10 @@ func Init(app *application.Application) {
 		ReadTimeout:  10 * time.Second,
 	}
 
-	router.HandleFunc("/webhooks", func(w http.ResponseWriter, r *http.Request) {
-		startTime := time.Now()
-		w.Header().Set("Content-Type", "application/json")
-		app.WebhookHandler.Refresh()
-		json.NewEncoder(w).Encode(app.WebhookHandler.Webhooks)
-		app.Logger.Entry(logger.Container{
-			Status:         logger.STATUS_INFO,
-			Info:           "Refreshed and listed available webhooks",
-			HttpRequest:    r,
-			ProcessingTime: time.Since(startTime),
-		})
-	}).Methods("GET")
-
-	router.HandleFunc("/webhooks/{repo_name}/{action}", handleWebhookAction(app))
+	router.NotFoundHandler = http.HandlerFunc(root(app))
+	router.HandleFunc("/webhooks", handleWebhooks(app))
+	router.HandleFunc("/webhooks/refresh", handleWebhooksReload(app))
+	router.HandleFunc("/webhooks/{repo_name}/{action}", handleWebhooksRepoNameAction(app))
 
 	err := server.ListenAndServe()
 	if err != nil {
@@ -77,7 +66,37 @@ func root(app *application.Application) http.HandlerFunc {
 	}
 }
 
-func handleWebhookAction(app *application.Application) func(http.ResponseWriter, *http.Request) {
+func handleWebhooks(app *application.Application) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		startTime := time.Now()
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(app.WebhookHandler.Webhooks)
+		app.Logger.Entry(logger.Container{
+			Status:         logger.STATUS_INFO,
+			Info:           "Refreshed and listed available webhooks",
+			HttpRequest:    r,
+			ProcessingTime: time.Since(startTime),
+		})
+	}
+}
+
+func handleWebhooksReload(app *application.Application) func(http.ResponseWriter, *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		startTime := time.Now()
+
+		app.WebhookHandler.Reload()
+
+		app.Logger.Entry(logger.Container{
+			Status:         logger.STATUS_INFO,
+			Info:           "Webhooks reloaded",
+			HttpRequest:    r,
+			ProcessingTime: time.Since(startTime),
+		})
+	}
+}
+
+func handleWebhooksRepoNameAction(app *application.Application) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		startTime := time.Now()
 		vars := mux.Vars(r)
@@ -93,6 +112,34 @@ func handleWebhookAction(app *application.Application) func(http.ResponseWriter,
 				HttpRequest:    r,
 				ProcessingTime: time.Since(startTime),
 			})
+			return
+		}
+
+		if action == "toggle_active" {
+			var state bool
+			if webhook.Active {
+				state = false
+			} else {
+				state = true
+			}
+
+			err := app.WebhookHandler.UpdateActive(repoName, state)
+			if err != nil {
+				app.Logger.Entry(logger.Container{
+					Status:         logger.STATUS_ERROR,
+					Error:          "Could not change webhook Active state: " + err.Error(),
+					HttpRequest:    r,
+					ProcessingTime: time.Since(startTime),
+				})
+			}
+
+			app.Logger.Entry(logger.Container{
+				Status:         logger.STATUS_INFO,
+				Info:           "Webhook state changed to: " + strconv.FormatBool(webhook.Active),
+				HttpRequest:    r,
+				ProcessingTime: time.Since(startTime),
+			})
+
 			return
 		}
 

@@ -1,7 +1,6 @@
 repo_url: git@github.com:passon-engineering/sw-gittycat-server.git
 repo_name: sw-gittycat-server
-route: /sw-gittycat-server
+route: /sw-gittycat-server/run
+active: true
 commands:
     - git pull
-last_call: "2023-07-19T13:53:57+02:00"
-processing_time: ""

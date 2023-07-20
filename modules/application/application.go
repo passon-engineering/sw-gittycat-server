@@ -37,9 +37,6 @@ func Init() *Application {
 		Queue:      make(chan webhooks.WebhookAction, 100),
 	}
 
-	//capture global server path
-	app.ServerPath = filepath.Dir(os.Args[0])
-
 	app.Logger, err = logger.NewLogger(
 		[]logger.LogFormat{
 			logger.FORMAT_TIMESTAMP,
