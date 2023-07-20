@@ -56,5 +56,10 @@ Description of tasks depending on states
   - Read all available webhooks from the `global app object`
   - Pass result as JSON to browser
   - If no webhooks available: Browser will display information 
-  - Create table and for each webhook: Display 'repository name' and show as 'active'
+  - Create table and for each webhook: Display 'repository name' and show as 'active' if so
 
+--> TRIGGER -> /webhooks/{repo_name}/toggle_active
+  - Read specific webhook via repo_name and toggle the active status
+  - If true: It will process incomming webhooks
+  - If false: It will not process incomming webhooks
+  - Write the active state to the webhook
