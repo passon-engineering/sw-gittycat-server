@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="container">
-    <img src="@/assets/logo.png" alt="Logo" class="logo">
-    <webhook-table :webhooks="webhooks" @toggleActive="toggleActive" />
+    <img src="@/assets/logo.png" alt="Logo" class="logo fadein">
+    <webhook-table class="fadein" :webhooks="webhooks" @toggleActive="toggleActive" />
   </div>
 </template>
 
@@ -40,12 +40,20 @@ export default {
 </script>
 
 <style>
+body {
+  background-color: #121212;
+  color: #FFFFFF;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 15px;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
+  background-color: #1f1f1f;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .logo {
@@ -53,5 +61,14 @@ export default {
   width: 200px; 
   height: auto; 
   margin: 0 auto 20px;
+}
+
+.fadein {
+  animation: fadeIn 2s;
+}
+
+@keyframes fadeIn {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
 }
 </style>

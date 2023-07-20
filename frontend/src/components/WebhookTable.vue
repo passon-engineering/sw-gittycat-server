@@ -1,6 +1,6 @@
 <template>
   <div class="webhook-table">
-    <h1 class="title">Webhook Statuses</h1>
+    <h1 class="title">Webhooks</h1>
     <table>
       <thead>
         <tr>
@@ -51,13 +51,14 @@ export default defineComponent({
 <style scoped>
 .title {
   text-align: center;
-  color: #2c3e50;
+  color: #ffffff;
   margin-bottom: 20px;
 }
 
 .webhook-table table {
   width: 100%;
   border-collapse: collapse;
+  color: #ffffff;
 }
 
 .webhook-table th,
@@ -71,7 +72,7 @@ export default defineComponent({
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
-  background-color: #4CAF50;
+  background-color: #444;
   color: white;
 }
 
@@ -81,10 +82,10 @@ export default defineComponent({
   border: none;
   cursor: pointer;
   border-radius: 5px;
-  background-color: #2c3e50;
+  background-color: #555;
 }
 
 .toggle-btn:hover {
-  background-color: #4CAF50;
+  background-color: #777;
 }
 </style>
