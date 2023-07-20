@@ -63,3 +63,11 @@ Description of tasks depending on states
   - If true: It will process incomming webhooks
   - If false: It will not process incomming webhooks
   - Write the active state to the webhook
+
+--> TRIGGER -> /webhooks/{repo_name}/run
+  - Read specific webhook via repo_name and check active
+  - If true: It will process the incomming webhook and move on
+  - Clone the calling repository
+  - Run the commands from the webhook
+  - Create a file with the name convention: {repo_name}-{hash_id}
+  - Store the request body in it and a copy of the webhook object as well as the command status if failed or succeeded
