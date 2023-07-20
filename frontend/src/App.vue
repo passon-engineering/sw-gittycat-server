@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="container">
-    <img src="@/assets/logo.png" alt="Logo" class="logo fadein" @click="showMatrix = true" />
+    <img src="@/assets/logo.png" alt="Logo" class="logo fadein" @click="showMatrix = !showMatrix" />
     <webhook-table class="fadein" :webhooks="webhooks" @toggleActive="toggleActive" />
     <matrix-effect v-if="showMatrix" />
   </div>

@@ -4,8 +4,8 @@
     <table>
       <thead>
         <tr>
-          <th>Repo URL</th>
-          <th>Repo Name</th>
+          <th>Repository URL</th>
+          <th>Repository Name</th>
           <th>Route</th>
           <th>Status</th>
           <th>Commands</th>
@@ -17,7 +17,7 @@
           <td>{{ webhook.repo_url }}</td>
           <td>{{ webhook.repo_name }}</td>
           <td>{{ webhook.route }}</td>
-          <td :style="{color: webhook.active ? 'green' : 'red'}">{{ webhook.active ? 'Active' : 'Inactive' }}</td>
+          <td :style="{color: webhook.active ? 'green' : 'red'}"><b>{{ webhook.active ? 'Active' : 'Inactive' }}</b></td>
           <td>{{ webhook.commands.join(', ') }}</td>
           <td>
             <button class="toggle-btn" @click="toggleActive(webhook.repo_name)">
@@ -64,6 +64,7 @@ export default defineComponent({
 .webhook-table th,
 .webhook-table td {
   border: 1px solid #ddd;
+  background-color: #2e2e2e;
   padding: 8px;
   text-align: center;
 }
