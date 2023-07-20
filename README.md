@@ -28,8 +28,8 @@ One of the key focus of GittyCat is its cloning from virtually any service that 
 | Test stage |  | 🟡 |  |
 | Deploy stage |  | 🟡 |  |
 | Webhook trigger |  |  | 🟢 |
-| Webinterface HTTPS/HTTPS |  | 🟡 |  |
-| Gitea integration |  | 🟡 |  |
+| Webinterface HTTP |  |  | 🟢 |
+| Webinterface HTTPS |  | 🟡 |  |
 | Docker integration |  | 🟡 |  |
 | OAuth  |  | 🟡 |  |
 
@@ -55,19 +55,11 @@ And now clone this repository
 
 3. Before you start the application, make sure that if you try to access private repositories the server has your public SSH key. If you need to create the key follow the steps:
 
-  Since this SW needs root permision, switch to the super user
-  ```
-  sudo su -
-  ```
-  or (depending on your system)
-  ```
-  su -
-  ```
-  Now create the keys (never share your private key!)
+  Create the keys (never share your private key!)
   ```
   ssh-keygen -t rsa -b 4096 -C "youremail@example.com"
   ```
-  Read the content and add it to your trusted keys
+  Read the content and add it to your trusted keys of your git repository server such as GitHub, Gitea, Gitlab and so on...
   ```
   cat ~/.ssh/id_rsa.pub
   ```
