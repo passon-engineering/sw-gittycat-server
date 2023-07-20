@@ -1,22 +1,26 @@
 <template>
   <div id="app" class="container">
-    <img src="@/assets/logo.png" alt="Logo" class="logo fadein">
+    <img src="@/assets/logo.png" alt="Logo" class="logo fadein" @click="showMatrix = true" />
     <webhook-table class="fadein" :webhooks="webhooks" @toggleActive="toggleActive" />
+    <matrix-effect v-if="showMatrix" />
   </div>
 </template>
 
 <script>
 import { ref, onMounted } from 'vue'
 import WebhookTable from './components/WebhookTable.vue'
+import MatrixEffect from './components/MatrixEffect.vue'
 import axios from 'axios'
 
 export default {
   name: 'App',
   components: {
-    WebhookTable
+    WebhookTable,
+    MatrixEffect
   },
   setup() {
     const webhooks = ref({})
+    const showMatrix = ref(false)
 
     const fetchWebhooks = async () => {
       const response = await axios.get('/webhooks')
@@ -33,7 +37,8 @@ export default {
 
     return {
       webhooks,
-      toggleActive
+      toggleActive,
+      showMatrix
     }
   }
 }
@@ -41,7 +46,7 @@ export default {
 
 <style>
 body {
-  background-color: #121212;
+  background-color: #1f1f1f;
   color: #FFFFFF;
 }
 
@@ -51,9 +56,16 @@ body {
   padding: 15px;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
-  background-color: #1f1f1f;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+#matrixCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: -1;
 }
 
 .logo {
