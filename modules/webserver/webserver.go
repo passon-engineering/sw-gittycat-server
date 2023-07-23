@@ -30,7 +30,7 @@ func Init(app *application.Application) {
 	router.NotFoundHandler = http.HandlerFunc(root(app))
 	router.HandleFunc("/webhooks", handleWebhooks(app))
 	router.HandleFunc("/webhooks/refresh", handleWebhooksReload(app))
-	router.HandleFunc("/webhooks/{repo_name}/{action}", handleWebhooksRepoNameAction(app))
+	router.HandleFunc("/webhooks/{repo_name}/{operation}", handleWebhooksRepoNameAction(app))
 
 	err := server.ListenAndServe()
 	if err != nil {
@@ -101,7 +101,7 @@ func handleWebhooksRepoNameAction(app *application.Application) func(http.Respon
 		startTime := time.Now()
 		vars := mux.Vars(r)
 		repoName := vars["repo_name"]
-		action := vars["action"]
+		operation := vars["operation"]
 
 		webhook, exists := app.WebhookHandler.Webhooks[repoName]
 		if !exists {
@@ -115,7 +115,7 @@ func handleWebhooksRepoNameAction(app *application.Application) func(http.Respon
 			return
 		}
 
-		if action == "toggle_active" {
+		if operation == "toggle_active" {
 			var state bool
 			if webhook.Active {
 				state = false
