@@ -2,6 +2,7 @@
   <div id="app" class="container">
     <img src="@/assets/logo.png" alt="Logo" class="logo fadein" @click="showMatrix = !showMatrix" />
     <webhook-table class="fadein" :webhooks="webhooks" @toggleActive="toggleActive" />
+    <action-table class="fadein" :actions="webhookActions" @rerunAction="rerunAction" />
     <matrix-effect v-if="showMatrix" />
   </div>
 </template>
@@ -9,6 +10,7 @@
 <script>
 import { ref, onMounted } from 'vue'
 import WebhookTable from './components/WebhookTable.vue'
+import ActionTable from './components/ActionTable.vue'
 import MatrixEffect from './components/MatrixEffect.vue'
 import axios from 'axios'
 
@@ -16,10 +18,12 @@ export default {
   name: 'App',
   components: {
     WebhookTable,
+    ActionTable,
     MatrixEffect
   },
   setup() {
     const webhooks = ref({})
+    const webhookActions = ref({})
     const showMatrix = ref(false)
 
     const fetchWebhooks = async () => {
@@ -27,7 +31,15 @@ export default {
       webhooks.value = response.data
     }
 
-    onMounted(fetchWebhooks)
+    const fetchWebhookActions = async () => {
+      const response = await axios.get('/webhook-actions')
+      webhookActions.value = response.data
+    }
+
+    onMounted(() => {
+      fetchWebhooks()
+      fetchWebhookActions()
+    })
 
     const toggleActive = async (repo_name) => {
       await axios.get(`/webhooks/${repo_name}/toggle_active`)
@@ -35,9 +47,16 @@ export default {
       await fetchWebhooks()
     }
 
+    const rerunAction = async (repo_name) => {
+      await axios.get(`/webhook-actions/${repo_name}/rerun`)
+      await fetchWebhookActions()
+    }
+
     return {
       webhooks,
+      webhookActions,
       toggleActive,
+      rerunAction,
       showMatrix
     }
   }
