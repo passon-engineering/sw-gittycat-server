@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sw-gittycat-server/modules/actions"
 	"sw-gittycat-server/modules/webhooks"
 	"time"
 
@@ -18,7 +19,7 @@ type Application struct {
 	Logger         *logger.Logger
 	WebhookHandler *webhooks.WebhookHandler
 	Config         Config
-	Queue          chan webhooks.WebhookAction
+	Queue          chan actions.Action
 }
 
 type Config struct {
@@ -34,7 +35,7 @@ func Init() *Application {
 		ServerPath: filepath.Dir(os.Args[0]),
 		SystemIP:   "",
 		Logger:     &logger.Logger{},
-		Queue:      make(chan webhooks.WebhookAction, 100),
+		Queue:      make(chan actions.Action, 100),
 	}
 
 	app.Logger, err = logger.NewLogger(

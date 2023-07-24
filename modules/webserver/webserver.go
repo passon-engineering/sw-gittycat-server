@@ -9,8 +9,8 @@ import (
 	"strconv"
 	"time"
 
+	"sw-gittycat-server/modules/actions"
 	"sw-gittycat-server/modules/application"
-	"sw-gittycat-server/modules/webhooks"
 
 	"github.com/gorilla/mux"
 	"github.com/passon-engineering/sw-go-logger-lib/logger"
@@ -163,7 +163,7 @@ func handleWebhooksRepoNameAction(app *application.Application) func(http.Respon
 		}
 
 		// Add the webhook action to the queue
-		app.Queue <- webhooks.WebhookAction{Webhook: webhook, RequestBody: requestBody}
+		app.Queue <- actions.Action{Webhook: webhook, RequestBody: requestBody}
 
 		app.Logger.Entry(logger.Container{
 			Status:         logger.STATUS_INFO,

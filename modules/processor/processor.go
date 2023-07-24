@@ -2,9 +2,9 @@ package processor
 
 import (
 	"fmt"
+	"sw-gittycat-server/modules/actions"
 	"sw-gittycat-server/modules/application"
 	"sw-gittycat-server/modules/git"
-	"sw-gittycat-server/modules/webhooks"
 	"time"
 
 	"github.com/passon-engineering/sw-go-logger-lib/logger"
@@ -18,7 +18,7 @@ func Init(app *application.Application) {
 	}()
 }
 
-func processWebhookQueue(action webhooks.WebhookAction, app *application.Application) {
+func processWebhookQueue(action actions.Action, app *application.Application) {
 	startTime := time.Now()
 
 	git.PullRepo(action.Webhook.RepoName, app)
