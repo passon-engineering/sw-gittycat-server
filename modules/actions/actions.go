@@ -3,7 +3,6 @@ package actions
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"os"
 	"path/filepath"
 	"sw-gittycat-server/modules/webhooks"
@@ -17,7 +16,7 @@ type Action struct {
 	ProcessingTime string                 `yaml:"processing_time" json:"processing_time"`
 }
 
-func (a *Action) Save() error {
+func (a *Action) Create(serverPath string) error {
 	after, ok := a.RequestBody["after"].(string)
 	if !ok || len(after) == 0 {
 		return errors.New("invalid or missing 'after' field in request body")
@@ -30,10 +29,11 @@ func (a *Action) Save() error {
 	}
 
 	// Create the file name
-	fileName := filepath.Join("/actions", fmt.Sprintf("%s.json", after))
+	fileName := a.Webhook.RepoName + "_SHA_" + after + ".json"
+	filePath := filepath.Join(serverPath, "actions", fileName)
 
 	// Create the file
-	err = os.WriteFile(fileName, data, 0644)
+	err = os.WriteFile(filePath, data, 0644)
 	if err != nil {
 		return err
 	}
