@@ -62,20 +62,25 @@ func main() {
 		startTime := time.Now()
 		app.Logger.Entry(logger.Container{
 			Status:         logger.STATUS_ERROR,
-			Error:          "Could not initialize list of webhooks " + err.Error(),
+			Error:          "Could not initialize list of actions " + err.Error(),
 			ProcessingTime: time.Since(startTime),
 		})
 	} else {
 		startTime := time.Now()
 		app.Logger.Entry(logger.Container{
 			Status:         logger.STATUS_INFO,
-			Info:           "Initialized list of webhooks:",
+			Info:           "Initialized list of actions:",
 			ProcessingTime: time.Since(startTime),
 		})
-		for _, webhook := range app.WebhookHandler.Webhooks {
+		for _, action := range app.ActionHandler.Actions {
+			after, ok := action.RequestBody["after"].(string)
+			if !ok || len(after) == 0 {
+				after = "invalid or missing 'after' field in request body"
+			}
+
 			app.Logger.Entry(logger.Container{
 				Status: logger.STATUS_INFO,
-				Info:   webhook.RepoName + " listening to: " + webhook.Route,
+				Info:   action.Webhook.RepoName + " SHA hash: " + after + " last call: " + action.LastCall,
 			})
 		}
 	}
