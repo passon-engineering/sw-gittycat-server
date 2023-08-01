@@ -3,9 +3,12 @@ package actions
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"sw-gittycat-server/modules/webhooks"
+	"sync"
 )
 
 type Action struct {
@@ -16,7 +19,23 @@ type Action struct {
 	ProcessingTime string                 `yaml:"processing_time" json:"processing_time"`
 }
 
-func (a *Action) Create(serverPath string) error {
+type ActionHandler struct {
+	Directory string
+	Actions   map[string]*Action
+	sync.Mutex
+}
+
+func NewActionHandler(directory string) (*ActionHandler, error) {
+	handler := &ActionHandler{Directory: directory, Actions: make(map[string]*Action)}
+	err := handler.Reload()
+	if err != nil {
+		return nil, err
+	}
+
+	return handler, nil
+}
+
+func (a *Action) Add(serverPath string) error {
 	after, ok := a.RequestBody["after"].(string)
 	if !ok || len(after) == 0 {
 		return errors.New("invalid or missing 'after' field in request body")
@@ -39,4 +58,44 @@ func (a *Action) Create(serverPath string) error {
 	}
 
 	return nil
+}
+
+func (handler *ActionHandler) Reload() error {
+	handler.Lock()
+	defer handler.Unlock()
+
+	files, err := os.ReadDir(handler.Directory)
+	if err != nil {
+		return fmt.Errorf("error reading directory: %w", err)
+	}
+
+	handler.Actions = make(map[string]*Action)
+
+	for _, file := range files {
+		if !file.IsDir() && strings.HasSuffix(file.Name(), ".json") {
+			filePath := filepath.Join(handler.Directory, file.Name())
+			action, err := loadAction(filePath)
+			if err != nil {
+				return fmt.Errorf("error loading webhook from %s: %w", file.Name(), err)
+			}
+			handler.Actions[file.Name()] = action
+		}
+	}
+
+	return nil
+}
+
+func loadAction(filePath string) (*Action, error) {
+	bytes, err := os.ReadFile(filePath)
+	if err != nil {
+		return nil, fmt.Errorf("error reading action file: %w", err)
+	}
+
+	var action Action
+	err = json.Unmarshal(bytes, &action)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshalling action: %w", err)
+	}
+
+	return &action, nil
 }
