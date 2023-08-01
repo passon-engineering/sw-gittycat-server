@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"strconv"
+	"sw-gittycat-server/modules/actions"
 	"sw-gittycat-server/modules/application"
 	"sw-gittycat-server/modules/git"
 	"sw-gittycat-server/modules/processor"
@@ -54,6 +55,29 @@ func main() {
 
 	for _, webhook := range app.WebhookHandler.Webhooks {
 		git.CloneRepo(webhook.RepoURL, webhook.RepoName, app)
+	}
+
+	app.ActionHandler, err = actions.NewActionHandler(app.ServerPath + "/actions")
+	if err != nil {
+		startTime := time.Now()
+		app.Logger.Entry(logger.Container{
+			Status:         logger.STATUS_ERROR,
+			Error:          "Could not initialize list of webhooks " + err.Error(),
+			ProcessingTime: time.Since(startTime),
+		})
+	} else {
+		startTime := time.Now()
+		app.Logger.Entry(logger.Container{
+			Status:         logger.STATUS_INFO,
+			Info:           "Initialized list of webhooks:",
+			ProcessingTime: time.Since(startTime),
+		})
+		for _, webhook := range app.WebhookHandler.Webhooks {
+			app.Logger.Entry(logger.Container{
+				Status: logger.STATUS_INFO,
+				Info:   webhook.RepoName + " listening to: " + webhook.Route,
+			})
+		}
 	}
 
 	processor.Init(app)

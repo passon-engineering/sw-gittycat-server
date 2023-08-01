@@ -42,5 +42,5 @@ func processWebhookQueue(action actions.Action, app *application.Application) {
 
 	action.Webhook.RunCommands(commandHandler)
 
-	action.Add(app.ServerPath)
+	app.ActionHandler.Add(&action)
 }

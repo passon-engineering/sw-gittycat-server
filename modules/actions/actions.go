@@ -35,31 +35,6 @@ func NewActionHandler(directory string) (*ActionHandler, error) {
 	return handler, nil
 }
 
-func (a *Action) Add(serverPath string) error {
-	after, ok := a.RequestBody["after"].(string)
-	if !ok || len(after) == 0 {
-		return errors.New("invalid or missing 'after' field in request body")
-	}
-
-	// Prepare JSON data
-	data, err := json.Marshal(a)
-	if err != nil {
-		return err
-	}
-
-	// Create the file name
-	fileName := a.Webhook.RepoName + "_SHA_" + after + ".json"
-	filePath := filepath.Join(serverPath, "actions", fileName)
-
-	// Create the file
-	err = os.WriteFile(filePath, data, 0644)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (handler *ActionHandler) Reload() error {
 	handler.Lock()
 	defer handler.Unlock()
@@ -76,7 +51,7 @@ func (handler *ActionHandler) Reload() error {
 			filePath := filepath.Join(handler.Directory, file.Name())
 			action, err := loadAction(filePath)
 			if err != nil {
-				return fmt.Errorf("error loading webhook from %s: %w", file.Name(), err)
+				return fmt.Errorf("error loading action from %s: %w", file.Name(), err)
 			}
 			handler.Actions[file.Name()] = action
 		}
@@ -98,4 +73,32 @@ func loadAction(filePath string) (*Action, error) {
 	}
 
 	return &action, nil
+}
+
+func (handler *ActionHandler) Add(a *Action) error {
+	handler.Lock()
+	defer handler.Unlock()
+
+	after, ok := a.RequestBody["after"].(string)
+	if !ok || len(after) == 0 {
+		return errors.New("invalid or missing 'after' field in request body")
+	}
+
+	// Prepare JSON data
+	data, err := json.Marshal(a)
+	if err != nil {
+		return err
+	}
+
+	// Create the file name
+	fileName := a.Webhook.RepoName + "_SHA_" + after + ".json"
+	filePath := filepath.Join(handler.Directory, fileName)
+
+	// Create the file
+	err = os.WriteFile(filePath, data, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

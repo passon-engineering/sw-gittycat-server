@@ -17,7 +17,7 @@ func handleWebhooks(app *application.Application) func(http.ResponseWriter, *htt
 		json.NewEncoder(w).Encode(app.WebhookHandler.Webhooks)
 		app.Logger.Entry(logger.Container{
 			Status:         logger.STATUS_INFO,
-			Info:           "Refreshed and listed available webhooks",
+			Info:           "Listed available webhooks",
 			HttpRequest:    r,
 			ProcessingTime: time.Since(startTime),
 		})

@@ -18,6 +18,7 @@ type Application struct {
 	SystemIP       string
 	Logger         *logger.Logger
 	WebhookHandler *webhooks.WebhookHandler
+	ActionHandler  *actions.ActionHandler
 	Config         Config
 	Queue          chan actions.Action
 }
