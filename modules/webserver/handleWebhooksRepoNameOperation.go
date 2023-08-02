@@ -81,7 +81,7 @@ func handleWebhooksRepoNameOperation(app *application.Application) func(http.Res
 		}
 
 		// Add the webhook action to the queue
-		app.Queue <- actions.Action{Webhook: webhook, RequestBody: requestBody}
+		app.Queue <- actions.Action{Webhook: webhook, RequestBody: requestBody, LastCall: time.Now().Format(time.RFC3339)}
 
 		app.Logger.Entry(logger.Container{
 			Status:         logger.STATUS_INFO,

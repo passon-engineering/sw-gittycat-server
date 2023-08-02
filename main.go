@@ -90,7 +90,4 @@ func main() {
 	app.Config.HttpPort = strconv.Itoa(port)
 	app.Config.WebDirectory = "/frontend/dist/"
 	webserver.Init(app)
-
-	//git.DeleteAllRepositories(app)
-
 }
