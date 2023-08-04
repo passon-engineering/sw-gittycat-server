@@ -2,7 +2,7 @@
   <div id="app" class="container">
     <img src="@/assets/logo.png" alt="Logo" class="logo fadein" @click="showMatrix = !showMatrix" />
     <webhook-table class="fadein" :webhooks="webhooks" @toggleActive="toggleActive" />
-    <action-table class="fadein" :actions="webhookActions" @rerunAction="rerunAction" />
+    <action-table class="fadein" :actions="actions" @rerunAction="rerunAction" />
     <matrix-effect v-if="showMatrix" />
   </div>
 </template>
@@ -23,7 +23,7 @@ export default {
   },
   setup() {
     const webhooks = ref({})
-    const webhookActions = ref({})
+    const actions = ref({})
     const showMatrix = ref(false)
 
     const fetchWebhooks = async () => {
@@ -31,14 +31,14 @@ export default {
       webhooks.value = response.data
     }
 
-    const fetchWebhookActions = async () => {
-      const response = await axios.get('/webhook-actions')
-      webhookActions.value = response.data
+    const fetchActions = async () => {
+      const response = await axios.get('/actions')
+      actions.value = response.data
     }
 
     onMounted(() => {
       fetchWebhooks()
-      fetchWebhookActions()
+      fetchActions()
     })
 
     const toggleActive = async (repo_name) => {
@@ -48,13 +48,13 @@ export default {
     }
 
     const rerunAction = async (repo_name) => {
-      await axios.get(`/webhook-actions/${repo_name}/rerun`)
-      await fetchWebhookActions()
+      await axios.get(`/actions/${repo_name}/rerun`)
+      await fetchActions()
     }
 
     return {
       webhooks,
-      webhookActions,
+      actions,
       toggleActive,
       rerunAction,
       showMatrix
