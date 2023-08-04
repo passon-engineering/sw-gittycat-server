@@ -47,8 +47,8 @@ export default {
       await fetchWebhooks()
     }
 
-    const rerunAction = async (repo_name) => {
-      await axios.get(`/actions/${repo_name}/rerun`)
+    const rerunAction = async (hash) => {
+      await axios.get(`/actions/${hash}/rerun`)
       await fetchActions()
     }
 
