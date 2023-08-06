@@ -42,5 +42,6 @@ func processActionQueue(action actions.Action, app *application.Application) {
 
 	action.Webhook.RunCommands(commandHandler)
 
+	action.ProcessingTime = time.Since(startTime).String()
 	app.ActionHandler.Add(&action)
 }
