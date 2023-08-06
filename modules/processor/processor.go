@@ -31,7 +31,8 @@ func processActionQueue(action actions.Action, app *application.Application) {
 				ProcessingTime: time.Since(startTime),
 			})
 		} else {
-			output := fmt.Sprintf("'%s': Command '%s' executed successfully, output: %s", action.Webhook.RepoName, command, output)
+			action.ProcessingTime = time.Since(startTime).String()
+			output := fmt.Sprintf("'%s': Command '%s' executed successfully, output: %s, processing time: %s", action.Webhook.RepoName, command, output, action.ProcessingTime)
 			app.Logger.Entry(logger.Container{
 				Status:         logger.STATUS_INFO,
 				Info:           output,
@@ -42,6 +43,5 @@ func processActionQueue(action actions.Action, app *application.Application) {
 
 	action.Webhook.RunCommands(commandHandler)
 
-	action.ProcessingTime = time.Since(startTime).String()
 	app.ActionHandler.Add(&action)
 }
