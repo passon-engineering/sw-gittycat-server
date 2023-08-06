@@ -13,12 +13,12 @@ import (
 func Init(app *application.Application) {
 	go func() {
 		for action := range app.Queue {
-			processWebhookQueue(action, app)
+			processActionQueue(action, app)
 		}
 	}()
 }
 
-func processWebhookQueue(action actions.Action, app *application.Application) {
+func processActionQueue(action actions.Action, app *application.Application) {
 	startTime := time.Now()
 
 	git.PullRepo(action.Webhook.RepoName, app)
