@@ -2,7 +2,6 @@ package actions
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -17,6 +16,7 @@ type Action struct {
 	RequestBody    map[string]interface{} `yaml:"request_body" json:"request_body"`
 	LastCall       string                 `yaml:"last_call" json:"last_call"`
 	ProcessingTime string                 `yaml:"processing_time" json:"processing_time"`
+	FileName       string                 `yaml:"file_name" json:"file_name"`
 }
 
 type ActionHandler struct {
@@ -79,20 +79,13 @@ func (handler *ActionHandler) Add(a *Action) error {
 	handler.Lock()
 	defer handler.Unlock()
 
-	after, ok := a.RequestBody["after"].(string)
-	if !ok || len(after) == 0 {
-		return errors.New("invalid or missing 'after' field in request body")
-	}
-
 	// Prepare JSON data
 	data, err := json.Marshal(a)
 	if err != nil {
 		return err
 	}
 
-	// Create the file name
-	fileName := a.Webhook.RepoName + "_SHA_" + after + ".json"
-	filePath := filepath.Join(handler.Directory, fileName)
+	filePath := filepath.Join(handler.Directory, a.FileName)
 
 	// Create the file
 	err = os.WriteFile(filePath, data, 0644)

@@ -31,7 +31,17 @@ func processActionQueue(action actions.Action, app *application.Application) {
 				ProcessingTime: time.Since(startTime),
 			})
 		} else {
-			action.ProcessingTime = time.Since(startTime).String()
+
+			after, ok := action.RequestBody["after"].(string)
+			if !ok || len(after) == 0 {
+				after = "no_hash_available"
+			}
+
+			elapsedTime := time.Since(startTime)
+			action.ProcessingTime = elapsedTime.String()
+
+			action.FileName = startTime.Format("2006-01-02_15-04-05") + "_" + action.Webhook.RepoName + "_" + after + ".json"
+
 			output := fmt.Sprintf("'%s': Command '%s' executed successfully, output: %s, processing time: %s", action.Webhook.RepoName, command, output, action.ProcessingTime)
 			app.Logger.Entry(logger.Container{
 				Status:         logger.STATUS_INFO,
