@@ -1,4 +1,4 @@
 #!/bin/bash
 
 git pull
-./builder.sh 
+./build.sh 
