@@ -37,7 +37,7 @@ export default defineComponent({
   data() {
     return {
       sortOrder: -1, // 1 for ascending, -1 for descending
-      sortByColumn: null,
+      sortByColumn: 'last_call', // Default sorting column
     }
   },
   computed: {
