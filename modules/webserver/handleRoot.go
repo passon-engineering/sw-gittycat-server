@@ -26,7 +26,7 @@ func handleRoot(app *application.Application) http.HandlerFunc {
 			return
 		}
 
-		web.ServeStaticFile(w, r, "frontend/dist/"+path)
+		web.ServeStaticFile(w, r, app.ServerPath+"frontend/dist/"+path)
 
 	}
 }
