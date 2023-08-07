@@ -12,7 +12,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(action, key) in actions" :key="key">
+        <tr v-for="(action, key) in reversedActions" :key="key">
           <td>{{ action.webhook.repo_name }}</td>
           <td :style="{color: action.success ? 'green' : 'red'}"><b>{{ action.success ? 'Success' : 'Failure' }}</b></td>
           <td>{{ action.last_call }}</td>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent, computed } from 'vue'
 
 export default defineComponent({
   name: 'ActionTable',
@@ -39,8 +39,16 @@ export default defineComponent({
       emit('rerunAction', repo_name)
     }
 
+    // Compute reversedActions by sorting actions in descending order based on last_call
+    const reversedActions = computed(() => {
+      return props.actions.slice().sort((a, b) =>
+        new Date(b.last_call).getTime() - new Date(a.last_call).getTime()
+      );
+    });
+
     return {
-      rerunAction
+      rerunAction,
+      reversedActions
     }
   }
 })
