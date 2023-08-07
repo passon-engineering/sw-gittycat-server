@@ -42,13 +42,17 @@ export default defineComponent({
   },
   computed: {
     sortedActions() {
-      const sorted = [...this.actions].sort((a, b) => {
+      const sorted = Object.keys(this.actions).sort((a, b) => {
+        const actionA = this.actions[a][this.sortByColumn];
+        const actionB = this.actions[b][this.sortByColumn];
+
         if (this.sortByColumn) {
-          return a[this.sortByColumn] < b[this.sortByColumn] ? -this.sortOrder : this.sortOrder
+          return actionA < actionB ? -this.sortOrder : this.sortOrder;
         }
-        return 0
-      })
-      return sorted
+        return 0;
+      });
+
+      return sorted.map(key => this.actions[key]);
     },
   },
   methods: {
