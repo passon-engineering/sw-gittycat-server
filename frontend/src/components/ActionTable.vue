@@ -54,16 +54,21 @@ export default defineComponent({
     }
   },
   computed: {
-    sortedActions() {
-      const sorted = this.actions.slice().sort((a, b) => {
-        const modifier = this.sortDir === 'desc' ? -1 : 1;
-        if (a[this.sortBy] < b[this.sortBy]) return -1 * modifier;
-        if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
-        return 0;
-      });
-      return sorted;
+  sortedActions() {
+    if (!Array.isArray(this.actions)) {
+      return [];
     }
+
+    const sorted = this.actions.slice().sort((a, b) => {
+      const modifier = this.sortDir === 'desc' ? -1 : 1;
+      if (a[this.sortBy] < b[this.sortBy]) return -1 * modifier;
+      if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
+      return 0;
+    });
+
+    return sorted;
   }
+}
 })
 </script>
 
