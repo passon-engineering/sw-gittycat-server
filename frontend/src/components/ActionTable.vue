@@ -4,15 +4,15 @@
     <table>
       <thead>
         <tr>
-          <th>Repository Name</th>
-          <th>Status</th>
-          <th>Last Call</th>
-          <th>Processing Time</th>
+          <th @click="sortTable('repo_name')">Repository Name</th>
+          <th @click="sortTable('success')">Status</th>
+          <th @click="sortTable('last_call')">Last Call</th>
+          <th @click="sortTable('processing_time')">Processing Time</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(action, key) in reversedActions" :key="key">
+        <tr v-for="(action, key) in sortedActions" :key="key">
           <td>{{ action.webhook.repo_name }}</td>
           <td :style="{color: action.success ? 'green' : 'red'}"><b>{{ action.success ? 'Success' : 'Failure' }}</b></td>
           <td>{{ action.last_call }}</td>
@@ -29,26 +29,39 @@
 </template>
 
 <script>
-import { defineComponent, computed } from 'vue'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'ActionTable',
   props: ['actions'],
-  setup(props, { emit }) {
-    const rerunAction = (repo_name) => {
-      emit('rerunAction', repo_name)
-    }
-
-    // Compute reversedActions by sorting actions in descending order based on last_call
-    const reversedActions = computed(() => {
-      return props.actions.slice().sort((a, b) =>
-        new Date(b.last_call).getTime() - new Date(a.last_call).getTime()
-      );
-    });
-
+  data() {
     return {
-      rerunAction,
-      reversedActions
+      sortBy: 'repo_name', // Default sorting column
+      sortDir: 'asc'      // Default sorting direction
+    };
+  },
+  methods: {
+    rerunAction(repo_name) {
+      this.$emit('rerunAction', repo_name);
+    },
+    sortTable(column) {
+      if (this.sortBy === column) {
+        this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortBy = column;
+        this.sortDir = 'asc';
+      }
+    }
+  },
+  computed: {
+    sortedActions() {
+      const sorted = this.actions.slice().sort((a, b) => {
+        const modifier = this.sortDir === 'desc' ? -1 : 1;
+        if (a[this.sortBy] < b[this.sortBy]) return -1 * modifier;
+        if (a[this.sortBy] > b[this.sortBy]) return 1 * modifier;
+        return 0;
+      });
+      return sorted;
     }
   }
 })
