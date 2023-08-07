@@ -1,0 +1,5 @@
+# Ignore webhooks
+*.yaml
+
+# Except for:
+!sw-gittycat-server.yaml
