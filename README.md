@@ -48,9 +48,14 @@ And now clone this repository
   ```
   cd sw-gittycat-server
   ```
-  and build the project to create the binary (make sure you use go >1.20)
+  and build the project with:
   ```
-  go build -o gittycat-server main.go
+  ./build.sh
+  ```
+
+  To update the project according to the latest commit:
+  ```
+  ./update.sh
   ```
 
 3. Before you start the application, make sure that if you try to access private repositories the server has your public SSH key. If you need to create the key follow the steps:
