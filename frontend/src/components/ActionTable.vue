@@ -4,15 +4,15 @@
     <table>
       <thead>
         <tr>
-          <th>Repository Name</th>
-          <th>Status</th>
-          <th>Last Call</th>
-          <th>Processing Time</th>
+          <th @click="sortBy('webhook.repo_name')">Repository Name</th>
+          <th @click="sortBy('success')">Status</th>
+          <th @click="sortBy('last_call')">Last Call</th>
+          <th @click="sortBy('processing_time')">Processing Time</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(action, key) in actions" :key="key">
+        <tr v-for="(action, key) in sortedActions" :key="key">
           <td>{{ action.webhook.repo_name }}</td>
           <td :style="{color: action.success ? 'green' : 'red'}"><b>{{ action.success ? 'Success' : 'Failure' }}</b></td>
           <td>{{ action.last_call }}</td>
@@ -34,15 +34,36 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'ActionTable',
   props: ['actions'],
-  setup(props, { emit }) {
-    const rerunAction = (repo_name) => {
-      emit('rerunAction', repo_name)
-    }
-
+  data() {
     return {
-      rerunAction
+      sortOrder: 1, // 1 for ascending, -1 for descending
+      sortByColumn: null,
     }
-  }
+  },
+  computed: {
+    sortedActions() {
+      const sorted = [...this.actions].sort((a, b) => {
+        if (this.sortByColumn) {
+          return a[this.sortByColumn] < b[this.sortByColumn] ? -this.sortOrder : this.sortOrder
+        }
+        return 0
+      })
+      return sorted
+    },
+  },
+  methods: {
+    rerunAction(repo_name) {
+      this.$emit('rerunAction', repo_name)
+    },
+    sortBy(column) {
+      if (this.sortByColumn === column) {
+        this.sortOrder = -this.sortOrder
+      } else {
+        this.sortOrder = 1
+      }
+      this.sortByColumn = column
+    },
+  },
 })
 </script>
 
