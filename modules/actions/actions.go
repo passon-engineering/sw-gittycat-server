@@ -79,6 +79,8 @@ func (handler *ActionHandler) Add(a *Action) error {
 	handler.Lock()
 	defer handler.Unlock()
 
+	handler.Actions[a.FileName] = a
+
 	// Prepare JSON data
 	data, err := json.Marshal(a)
 	if err != nil {
