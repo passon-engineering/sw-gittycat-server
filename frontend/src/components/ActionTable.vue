@@ -36,7 +36,7 @@ export default defineComponent({
   props: ['actions'],
   data() {
     return {
-      sortOrder: 1, // 1 for ascending, -1 for descending
+      sortOrder: -1, // 1 for ascending, -1 for descending
       sortByColumn: null,
     }
   },
