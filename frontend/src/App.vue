@@ -1,6 +1,9 @@
 <template>
   <div id="app" class="container">
     <img src="@/assets/logo.png" alt="Logo" class="logo fadein" @click="showMatrix = !showMatrix" />
+    <stats-table :title="'Actions Stats'" :stats="actionsStats" @deleteAction="deleteActions" />
+    <stats-table :title="'Repositories Stats'" :stats="repositoriesStats" @deleteAction="deleteRepositories" />
+    <stats-table :title="'Artifacts Stats'" :stats="artifactsStats" @deleteAction="deleteArtifacts" />
     <webhook-table class="fadein" :webhooks="webhooks" @toggleActive="toggleActive" />
     <action-table class="fadein" :actions="actions" @rerunAction="rerunAction" />
     <matrix-effect v-if="showMatrix" />
@@ -11,6 +14,7 @@
 import { ref, onMounted } from 'vue'
 import WebhookTable from './components/WebhookTable.vue'
 import ActionTable from './components/ActionTable.vue'
+import StatsTable from './components/StatsTable.vue'
 import MatrixEffect from './components/MatrixEffect.vue'
 import axios from 'axios'
 
@@ -19,27 +23,27 @@ export default {
   components: {
     WebhookTable,
     ActionTable,
+    StatsTable,
     MatrixEffect
   },
   setup() {
     const webhooks = ref({})
     const actions = ref({})
     const showMatrix = ref(false)
-
-    const fetchWebhooks = async () => {
-      const response = await axios.get('/webhooks')
-      webhooks.value = response.data
-    }
-
-    const fetchActions = async () => {
-      const response = await axios.get('/actions')
-      actions.value = response.data
-    }
+    
+    const actionsStats = ref([]);
+    const repositoriesStats = ref([]);
+    const artifactsStats = ref([]);
 
     onMounted(() => {
+      // Fetch data for webhooks and actions
       fetchWebhooks()
       fetchActions()
-    })
+      // Fetch stats data for each endpoint
+      fetchActionsStats()
+      fetchRepositoriesStats()
+      fetchArtifactsStats()
+    });
 
     const toggleActive = async (repo_name) => {
       await axios.get(`/webhooks/${repo_name}/toggle_active`)
@@ -52,45 +56,59 @@ export default {
       await fetchActions()
     }
 
+    const deleteActions = async (actionEndpoint) => {
+      // Implement delete logic for actions
+    }
+
+    const deleteRepositories = async (actionEndpoint) => {
+      // Implement delete logic for repositories
+    }
+
+    const deleteArtifacts = async (actionEndpoint) => {
+      // Implement delete logic for artifacts
+    }
+
+    const fetchWebhooks = async () => {
+      const response = await axios.get('/webhooks')
+      webhooks.value = response.data
+    }
+
+    const fetchActions = async () => {
+      const response = await axios.get('/actions')
+      actions.value = response.data
+    }
+
+    const fetchActionsStats = async () => {
+      // Fetch stats data for actions
+      const response = await axios.get('/actions/stats');
+      actionsStats.value = response.data;
+    }
+
+    const fetchRepositoriesStats = async () => {
+      // Fetch stats data for repositories
+      const response = await axios.get('/repositories/stats');
+      repositoriesStats.value = response.data;
+    }
+
+    const fetchArtifactsStats = async () => {
+      // Fetch stats data for artifacts
+      const response = await axios.get('/artifacts/stats');
+      artifactsStats.value = response.data;
+    }
+
     return {
       webhooks,
       actions,
       toggleActive,
       rerunAction,
-      showMatrix
+      showMatrix,
+      actionsStats,
+      repositoriesStats,
+      artifactsStats,
+      deleteActions,
+      deleteRepositories,
+      deleteArtifacts
     }
   }
 }
 </script>
-
-<style>
-body {
-  background-color: #1f1f1f;
-  color: #FFFFFF;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 15px;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
-  position: relative;
-}
-
-.logo {
-  display: block;
-  width: 200px; 
-  height: auto; 
-  margin: 0 auto 20px;
-}
-
-.fadein {
-  animation: fadeIn 2s;
-}
-
-@keyframes fadeIn {
-  0% {opacity: 0;}
-  100% {opacity: 1;}
-}
-</style>
