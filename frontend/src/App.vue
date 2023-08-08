@@ -115,3 +115,35 @@ export default {
   }
 }
 </script>
+
+<style>
+body {
+  background-color: #1f1f1f;
+  color: #FFFFFF;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 15px;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  position: relative;
+}
+
+.logo {
+  display: block;
+  width: 200px; 
+  height: auto; 
+  margin: 0 auto 20px;
+}
+
+.fadein {
+  animation: fadeIn 2s;
+}
+
+@keyframes fadeIn {
+  0% {opacity: 0;}
+  100% {opacity: 1;}
+}
+</style>
