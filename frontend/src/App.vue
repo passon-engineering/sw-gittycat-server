@@ -58,14 +58,17 @@ export default {
 
     const deleteActions = async (actionEndpoint) => {
       console.log("deleteActions")
+      console.log(actionEndpoint)
     }
 
     const deleteRepositories = async (actionEndpoint) => {
       console.log("deleteRepositories")
+      console.log(actionEndpoint)
     }
 
     const deleteArtifacts = async (actionEndpoint) => {
       console.log("deleteArtifacts")
+      console.log(actionEndpoint)
     }
 
     const fetchWebhooks = async () => {
