@@ -1,59 +1,60 @@
 <template>
   <div class="data-row">
     <div class="data-title">{{ title }}</div>
-    <div class="data-item">
-      <div class="data-label">File Count</div>
-      <div class="data-value">{{ stats.file_count }}</div>
+    <div class="data-label-value">
+      <div class="data-item">
+        <span class="data-label">File Count:</span>
+        <span class="data-value">{{ stats.file_count }}</span>
+      </div>
+      <div class="data-item">
+        <span class="data-label">Directory Count:</span>
+        <span class="data-value">{{ stats.directory_count }}</span>
+      </div>
+      <div class="data-item">
+        <span class="data-label">Total Size:</span>
+        <span class="data-value">{{ formatSize(stats.total_size) }}</span>
+      </div>
     </div>
-    <div class="data-item">
-      <div class="data-label">Directory Count</div>
-      <div class="data-value">{{ stats.directory_count }}</div>
-    </div>
-    <div class="data-item">
-      <div class="data-label">Total Size</div>
-      <div class="data-value">{{ formatSize(stats.total_size) }}</div>
-    </div>
-    <button class="delete-button" @click="deleteAction(stat.actionEndpoint)">Delete</button>
+    <button class="delete-button" @click="deleteAction(stats.actionEndpoint)">Delete</button>
   </div>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'StatsTable',
   props: {
     title: String,
-    stats: Array,
+    stats: Object,
   },
   methods: {
     formatSize(sizeInBytes) {
-    if (sizeInBytes === undefined) {
-      return 'N/A'; // Return a placeholder or appropriate value for undefined size
-    }
+      if (sizeInBytes === undefined) {
+        return 'N/A'; // Return a placeholder or appropriate value for undefined size
+      }
 
-    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-    let size = sizeInBytes;
-    let unitIndex = 0;
+      const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+      let size = sizeInBytes;
+      let unitIndex = 0;
 
-    while (size >= 1024 && unitIndex < units.length - 1) {
-      size /= 1024;
-      unitIndex++;
-    }
+      while (size >= 1024 && unitIndex < units.length - 1) {
+        size /= 1024;
+        unitIndex++;
+      }
 
-    return `${size.toFixed(2)} ${units[unitIndex]}`;
-  },
+      return `${size.toFixed(2)} ${units[unitIndex]}`;
+    },
     deleteAction(actionEndpoint) {
-      this.$emit('deleteAction', actionEndpoint)
+      this.$emit('deleteAction', actionEndpoint);
     },
   },
-})
+});
 </script>
 
 <style scoped>
 .data-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   background-color: #2e2e2e;
   padding: 10px;
@@ -68,18 +69,24 @@ export default defineComponent({
   color: #ffffff;
 }
 
+.data-label-value {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
 .data-item {
-  text-align: center;
+  display: flex;
+  align-items: center;
 }
 
 .data-label {
-  font-weight: bold;
-  margin-bottom: 5px;
+  margin-right: 5px;
   color: #ffffff;
 }
 
 .data-value {
-  font-size: 1.2em;
+  margin-right: 5px;
   color: #ffffff;
 }
 
@@ -96,4 +103,4 @@ export default defineComponent({
 .delete-button:hover {
   background-color: #d32f2f;
 }
-</style> 
+</style>
