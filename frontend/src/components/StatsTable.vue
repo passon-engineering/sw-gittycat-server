@@ -1,21 +1,14 @@
 <template>
-  <div class="data-row">
-    <div class="data-title">{{ title }}</div>
-    <div class="data-label-value">
-      <div class="data-item">
-        <span class="data-label">File Count:</span>
-        <span class="data-value">{{ stats.file_count }}</span>
-      </div>
-      <div class="data-item">
-        <span class="data-label">Directory Count:</span>
-        <span class="data-value">{{ stats.directory_count }}</span>
-      </div>
-      <div class="data-item">
-        <span class="data-label">Total Size:</span>
-        <span class="data-value">{{ formatSize(stats.total_size) }}</span>
-      </div>
-    </div>
-    <button class="delete-button" @click="deleteAction(stats.actionEndpoint)">Delete</button>
+  <div class="stats-table">
+    <table>
+      <tr>
+        <td class="title">{{ title }}</td>
+        <td class="data-item data-cell">File Count: {{ stats.file_count }}</td>     
+        <td class="data-item data-cell">Directory Count: {{ stats.directory_count }}</td>
+        <td class="data-item data-cell">Total Size: {{ formatSize(stats.total_size) }}</td>        
+        <td class="data-cell"><button class="delete-button" @click="deleteAction(stats.actionEndpoint)">Delete</button></td>
+      </tr>
+    </table>
   </div>
 </template>
 
@@ -53,41 +46,35 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.data-row {
+.stats-table {
   display: flex;
+  justify-content: center;
   align-items: center;
-  background-color: #2e2e2e;
-  padding: 10px;
-  border: 1px solid #444;
-  border-radius: 5px;
-  margin-bottom: 10px;
 }
 
-.data-title {
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.title {
   font-weight: bold;
-  width: 150px; /* Adjust the width as needed */
+  width: 150px;
+  padding-right: 10px;
   color: #ffffff;
-}
-
-.data-label-value {
-  display: flex;
-  gap: 20px;
-  align-items: center;
 }
 
 .data-item {
-  display: flex;
-  align-items: center;
-}
-
-.data-label {
   margin-right: 5px;
   color: #ffffff;
 }
 
-.data-value {
-  margin-right: 5px;
-  color: #ffffff;
+.data-cell {
+  width: 25%; /* Adjust the width as needed */
+  padding: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .delete-button {
