@@ -1,9 +1,9 @@
 <template>
   <div id="app" class="container">
     <img src="@/assets/logo.png" alt="Logo" class="logo fadein" @click="showMatrix = !showMatrix" />
-    <stats-table :title="'Actions Stats'" :stats="actionsStats" @deleteAction="deleteActions" />
-    <stats-table :title="'Repositories Stats'" :stats="repositoriesStats" @deleteAction="deleteRepositories" />
-    <stats-table :title="'Artifacts Stats'" :stats="artifactsStats" @deleteAction="deleteArtifacts" />
+    <stats-table :title="'Actions'" :stats="actionsStats" @deleteAction="deleteActions" />
+    <stats-table :title="'Repositories'" :stats="repositoriesStats" @deleteAction="deleteRepositories" />
+    <stats-table :title="'Artifacts'" :stats="artifactsStats" @deleteAction="deleteArtifacts" />
     <webhook-table class="fadein" :webhooks="webhooks" @toggleActive="toggleActive" />
     <action-table class="fadein" :actions="actions" @rerunAction="rerunAction" />
     <matrix-effect v-if="showMatrix" />
@@ -85,18 +85,21 @@ export default {
       // Fetch stats data for actions
       const response = await axios.get('/actions/stats');
       actionsStats.value = response.data;
+      console.log(actionsStats.value)
     }
 
     const fetchRepositoriesStats = async () => {
       // Fetch stats data for repositories
       const response = await axios.get('/repositories/stats');
       repositoriesStats.value = response.data;
+      console.log(repositoriesStats.value)
     }
 
     const fetchArtifactsStats = async () => {
       // Fetch stats data for artifacts
       const response = await axios.get('/artifacts/stats');
       artifactsStats.value = response.data;
+      console.log(artifactsStats.value)
     }
 
     return {
