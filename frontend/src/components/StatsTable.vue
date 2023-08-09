@@ -1,16 +1,30 @@
 <template>
   <div class="stats-table">
     <table>
-      <tr>
-        <td class="title">{{ title }}</td>
-        <td class="data-item data-cell">File Count: {{ stats.file_count }}</td>     
-        <td class="data-item data-cell">Directory Count: {{ stats.directory_count }}</td>
-        <td class="data-item data-cell">Total Size: {{ formatSize(stats.total_size) }}</td>        
-        <td class="data-cell"><button class="delete-button" @click="deleteAction(stats.actionEndpoint)">Delete</button></td>
+      <tr class="data-row">
+        <td class="data-item title">
+          <div class="data-value">{{ title }}</div>
+        </td>
+        <td class="data-item file-count">
+          <div class="data-label">File Count:</div>
+          <div class="data-value">{{ stats.file_count }}</div>
+        </td>
+        <td class="data-item directory-count">
+          <div class="data-label">Directory Count:</div>
+          <div class="data-value">{{ stats.directory_count }}</div>
+        </td>
+        <td class="data-item total-size">
+          <div class="data-label">Total Size:</div>
+          <div class="data-value">{{ formatSize(stats.total_size) }}</div>
+        </td>
+        <td class="data-item delete">
+          <button class="delete-button" @click="deleteAction(stats.actionEndpoint)">Delete</button>
+        </td>
       </tr>
     </table>
   </div>
 </template>
+
 
 <script>
 import { defineComponent } from 'vue';
@@ -24,7 +38,7 @@ export default defineComponent({
   methods: {
     formatSize(sizeInBytes) {
       if (sizeInBytes === undefined) {
-        return 'N/A'; // Return a placeholder or appropriate value for undefined size
+        return 'N/A';
       }
 
       const units = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -50,6 +64,7 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 5px 0; /* Adds vertical spacing between components */
 }
 
 table {
@@ -57,24 +72,45 @@ table {
   border-collapse: collapse;
 }
 
-.title {
-  font-weight: bold;
-  width: 150px;
-  padding-right: 10px;
+.data-row {
+  display: flex;
+  background-color: #2e2e2e;
+  border: 1px solid #444;
+  border-radius: 5px;
+  padding: 10px;
   color: #ffffff;
+  margin: 3px 0; /* Adds vertical spacing between rows */
 }
 
 .data-item {
-  margin-right: 5px;
-  color: #ffffff;
+  display: flex;
+  align-items: center;
 }
 
-.data-cell {
-  width: 25%; /* Adjust the width as needed */
-  padding: 5px;
+.data-label,
+.data-value {
+  font-size: 0.9em; /* Makes the font a little smaller */
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+.data-label {
+  margin-right: 5px;
+}
+
+/* Explicit widths for alignment */
+.data-item.title {
+  width: 25%;
+}
+
+.data-item.file-count,
+.data-item.directory-count,
+.data-item.total-size {
+  width: 20%;
+}
+
+.data-item.delete {
+  width: 15%;
+  justify-content: flex-end;
 }
 
 .delete-button {
