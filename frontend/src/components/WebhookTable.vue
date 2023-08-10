@@ -1,6 +1,7 @@
 <template>
   <div class="webhook-table">
-    <h1 class="title">Webhooks</h1>
+    <br>
+    <h2 class="title">> Webhooks</h2>
     <table>
       <thead>
         <tr>
@@ -51,42 +52,59 @@ export default defineComponent({
 <style scoped>
 .title {
   text-align: center;
-  color: #ffffff;
+  color: #00ffff; /* Cyan text color */
   margin-bottom: 20px;
+}
+
+.webhook-table {
+  font-family: Arial, sans-serif;
 }
 
 .webhook-table table {
   width: 100%;
   border-collapse: collapse;
-  color: #ffffff;
+  color: #00ffff; /* Cyan text color */
 }
 
 .webhook-table th,
 .webhook-table td {
-  border: 1px solid #ddd;
-  background-color: #2e2e2e;
-  padding: 8px;
-  text-align: center;
+  padding: 5px;
+  text-align: left;
+  border-bottom: 2px solid #ff00ff; /* Magenta border color */
+  font-size: 0.9em; /* Smaller font size */
 }
 
 .webhook-table th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: left;
-  background-color: #444;
-  color: white;
+  font-weight: 600;
 }
 
 .toggle-btn {
-  padding: 5px 10px;
-  color: white;
+  background-color: #ff4b4b;
+  color: #fff;
   border: none;
+  border-radius: 20px;
+  padding: 5px 10px;
   cursor: pointer;
-  border-radius: 5px;
-  background-color: #555;
+  transition: all 0.3s ease-in-out;
 }
 
 .toggle-btn:hover {
-  background-color: #777;
+  background-color: #ff7b7b;
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .webhook-table td {
+    padding: 8px;
+    font-size: 0.8em; /* Adjusted for smaller screens */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .webhook-table td {
+    padding: 6px;
+    font-size: 0.7em; /* Adjusted for very small screens */
+  }
 }
 </style>

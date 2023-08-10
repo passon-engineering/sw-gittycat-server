@@ -30,7 +30,7 @@ export default {
         ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';  // Paint a semi-transparent rectangle over the old frame
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = '#0F0';  // Green text
+        ctx.fillStyle = '#ff00ff';
         ctx.font = fontSize + 'px arial';
 
         for(let i = 0; i < drops.length; i++) {
