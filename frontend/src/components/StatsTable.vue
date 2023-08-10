@@ -49,47 +49,69 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.stats-table {
+  font-family: Arial, sans-serif;
+}
+
 .stats-table table {
   width: 100%;
   border-collapse: collapse;
-  color: #ffffff;
+  color: #00ffff; /* Cyan text color */
 }
 
-.stats-table th,
 .stats-table td {
-  border: 1px solid #ddd;
-  background-color: #2e2e2e;
-  padding: 8px;
-  text-align: center;
+  padding: 5px;
+  text-align: left;
+  border-bottom: 2px solid #ff00ff; /* Magenta border color */
+  font-size: 0.9em; /* Smaller font size */
 }
 
-.stats-table th {
-  padding-top: 12px;
-  padding-bottom: 12px;
-  text-align: left;
-  background-color: #444;
-  color: white;
+.delete-button:hover {
+  background-color: #ff7b7b;
+  transform: translateY(-2px);
 }
 
 /* Specific cell widths */
 .cell-title {
   width: 25%;
+  font-weight: 600;
 }
 
-.cell-file-count {
-  width: 20%;
-}
-
-.cell-directory-count {
-  width: 20%;
-}
-
+.cell-file-count,
+.cell-directory-count,
 .cell-total-size {
   width: 20%;
 }
 
 .cell-delete {
   width: 15%;
+  padding-right: 5px; /* 5 pixels space from the right */
+}
+
+.delete-button {
+  float: right; /* This will align the button to the right */
+  background-color: #ff4b4b;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .stats-table td {
+    padding: 8px;
+    font-size: 0.8em; /* Adjusted for smaller screens */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .stats-table td {
+    padding: 6px;
+    font-size: 0.7em; /* Adjusted for very small screens */
+  }
 }
 </style>
-
