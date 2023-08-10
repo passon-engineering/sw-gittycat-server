@@ -1,23 +1,12 @@
 <template>
   <div class="stats-table">
     <table>
-      <tr class="data-row">
-        <td class="data-item title">
-          <div class="data-value">{{ title }}</div>
-        </td>
-        <td class="data-item file-count">
-          <div class="data-label">File Count:</div>
-          <div class="data-value">{{ stats.file_count }}</div>
-        </td>
-        <td class="data-item directory-count">
-          <div class="data-label">Directory Count:</div>
-          <div class="data-value">{{ stats.directory_count }}</div>
-        </td>
-        <td class="data-item total-size">
-          <div class="data-label">Total Size:</div>
-          <div class="data-value">{{ formatSize(stats.total_size) }}</div>
-        </td>
-        <td class="data-item delete">
+      <tr>
+        <td class="cell-title">{{ title }}</td>
+        <td class="cell-file-count">File Count: {{ stats.file_count }}</td>
+        <td class="cell-directory-count">Directory Count: {{ stats.directory_count}}</td>
+        <td class="cell-total-size">Total Size: {{ formatSize(stats.total_size) }}</td>
+        <td class="cell-delete">
           <button class="delete-button" @click="deleteAction(stats.actionEndpoint)">Delete</button>
         </td>
       </tr>
@@ -60,70 +49,47 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.stats-table {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 5px 0; /* Adds vertical spacing between components */
-}
-
-table {
+.stats-table table {
   width: 100%;
   border-collapse: collapse;
-}
-
-.data-row {
-  display: flex;
-  background-color: #2e2e2e;
-  border: 1px solid #444;
-  border-radius: 5px;
-  padding: 10px;
   color: #ffffff;
-  margin: 3px 0; /* Adds vertical spacing between rows */
 }
 
-.data-item {
-  display: flex;
-  align-items: center;
+.stats-table th,
+.stats-table td {
+  border: 1px solid #ddd;
+  background-color: #2e2e2e;
+  padding: 8px;
+  text-align: center;
 }
 
-.data-label,
-.data-value {
-  font-size: 0.9em; /* Makes the font a little smaller */
-  white-space: nowrap;
+.stats-table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #444;
+  color: white;
 }
 
-.data-label {
-  margin-right: 5px;
-}
-
-/* Explicit widths for alignment */
-.data-item.title {
+/* Specific cell widths */
+.cell-title {
   width: 25%;
 }
 
-.data-item.file-count,
-.data-item.directory-count,
-.data-item.total-size {
+.cell-file-count {
   width: 20%;
 }
 
-.data-item.delete {
+.cell-directory-count {
+  width: 20%;
+}
+
+.cell-total-size {
+  width: 20%;
+}
+
+.cell-delete {
   width: 15%;
-  justify-content: flex-end;
-}
-
-.delete-button {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease-in-out;
-}
-
-.delete-button:hover {
-  background-color: #d32f2f;
 }
 </style>
+
