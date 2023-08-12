@@ -13,11 +13,18 @@ import (
 )
 
 type Webhook struct {
-	RepoURL  string   `yaml:"repo_url" json:"repo_url"`
-	RepoName string   `yaml:"repo_name" json:"repo_name"`
-	Route    string   `yaml:"route" json:"route"`
-	Active   bool     `yaml:"active" json:"active"`
-	Commands []string `yaml:"commands" json:"commands"`
+	BuildName        string   `yaml:"build_name"`
+	Active           bool     `yaml:"active"`
+	Route            string   `yaml:"route"`
+	ComposerCommands []string `yaml:"composer_commands"`
+	Repos            []Repo   `yaml:"repos"`
+}
+
+type Repo struct {
+	RepoURL            string   `yaml:"repo_url"`
+	RepoName           string   `yaml:"repo_name"`
+	BranchOrCommitHash string   `yaml:"branch_or_commit_hash"`
+	InnerRepoCommands  []string `yaml:"inner_repo_commands"`
 }
 
 type WebhookHandler struct {
@@ -54,7 +61,7 @@ func (handler *WebhookHandler) Reload() error {
 			if err != nil {
 				return fmt.Errorf("error loading webhook from %s: %w", file.Name(), err)
 			}
-			handler.Webhooks[webhook.RepoName] = webhook
+			handler.Webhooks[webhook.BuildName] = webhook
 		}
 	}
 
@@ -129,8 +136,17 @@ func (handler *WebhookHandler) UpdateActive(route string, status bool) error {
 	return saveWebhook(filePath, webhook)
 }
 
-func (webhook *Webhook) RunCommands(handleCommand func(command string, output string, err error)) {
-	for _, command := range webhook.Commands {
+func (webhook *Webhook) RunInnerRepoCommands(handleCommand func(command string, output string, err error)) {
+	for _, repo := range webhook.Repos {
+		for _, command := range repo.InnerRepoCommands {
+			output, err := system.RunCommand("cd " + repo.RepoName + " && " + command)
+			handleCommand(command, output, err)
+		}
+	}
+}
+
+func (webhook *Webhook) RunComposerCommands(handleCommand func(command string, output string, err error)) {
+	for _, command := range webhook.ComposerCommands {
 		output, err := system.RunCommand(command)
 		handleCommand(command, output, err)
 	}

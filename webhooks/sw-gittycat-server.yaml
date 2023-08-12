@@ -1,6 +1,12 @@
-repo_url: git@github.com:passon-engineering/sw-gittycat-server.git
-repo_name: sw-gittycat-server
+build_name: gittycat-latest
+active : true
 route: /sw-gittycat-server/run
-active: true
-commands:
+composer_commands: 
     - echo new webhook
+repos:
+    - repo_url: git@github.com:passon-engineering/sw-gittycat-server.git
+        repo_name: sw-gittycat-server
+        branch_or_commit_hash: LATEST
+        inner_repo_commands:
+            - echo sw-gittycat-server inner repo commands
+

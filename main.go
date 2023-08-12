@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"sw-gittycat-server/modules/actions"
 	"sw-gittycat-server/modules/application"
-	"sw-gittycat-server/modules/git"
 	"sw-gittycat-server/modules/processor"
 	"sw-gittycat-server/modules/webhooks"
 	"sw-gittycat-server/modules/webserver"
@@ -48,13 +47,9 @@ func main() {
 		for _, webhook := range app.WebhookHandler.Webhooks {
 			app.Logger.Entry(logger.Container{
 				Status: logger.STATUS_INFO,
-				Info:   webhook.RepoName + " listening to: " + webhook.Route,
+				Info:   webhook.BuildName + " listening to: " + webhook.Route,
 			})
 		}
-	}
-
-	for _, webhook := range app.WebhookHandler.Webhooks {
-		git.CloneRepo(webhook.RepoURL, webhook.RepoName, app)
 	}
 
 	app.ActionHandler, err = actions.NewActionHandler(app.ServerPath + "/actions")
@@ -80,7 +75,7 @@ func main() {
 
 			app.Logger.Entry(logger.Container{
 				Status: logger.STATUS_INFO,
-				Info:   action.Webhook.RepoName + " SHA hash: " + after + " last call: " + action.LastCall,
+				Info:   action.Webhook.BuildName + " SHA hash: " + after + " last call: " + action.LastCall,
 			})
 		}
 	}
