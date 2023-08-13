@@ -1,6 +1,6 @@
 build_name: gittycat-latest
 active : true
-route: /sw-gittycat-server/run
+route: /gittycat-latest/run
 composer_commands: 
     - echo new webhook
 repos:

@@ -5,21 +5,17 @@
     <table>
       <thead>
         <tr>
-          <th>Repository URL</th>
-          <th>Repository Name</th>
+          <th>Build</th>
           <th>Route</th>
           <th>Status</th>
-          <th>Commands</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(webhook, key) in webhooks" :key="key">
-          <td>{{ webhook.repo_url }}</td>
-          <td>{{ webhook.repo_name }}</td>
-          <td>{{ webhook.route }}</td>
+        <tr v-for="(webhook, webhookKey) in webhooks" :key="webhookKey">
+          <td>{{ webhook.build_name }}</td>
+          <td>{{ webhook.route }}</td>       
           <td :style="{color: webhook.active ? 'green' : 'red'}"><b>{{ webhook.active ? 'Active' : 'Inactive' }}</b></td>
-          <td>{{ webhook.commands.join(', ') }}</td>
           <td>
             <button class="toggle-btn" @click="toggleActive(webhook.repo_name)">
               {{ webhook.active ? 'Deactivate' : 'Activate' }}
