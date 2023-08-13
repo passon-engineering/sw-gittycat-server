@@ -13,18 +13,18 @@ import (
 )
 
 type Webhook struct {
-	BuildName        string   `yaml:"build_name"`
-	Active           bool     `yaml:"active"`
-	Route            string   `yaml:"route"`
-	ComposerCommands []string `yaml:"composer_commands"`
-	Repos            []Repo   `yaml:"repos"`
+	BuildName        string   `yaml:"build_name" json:"build_name"`
+	Active           bool     `yaml:"active" json:"active"`
+	Route            string   `yaml:"route" json:"route"`
+	ComposerCommands []string `yaml:"composer_commands" json:"composer_commands"`
+	Repos            []Repo   `yaml:"repos" json:"repos"`
 }
 
 type Repo struct {
-	RepoURL            string   `yaml:"repo_url"`
-	RepoName           string   `yaml:"repo_name"`
-	BranchOrCommitHash string   `yaml:"branch_or_commit_hash"`
-	InnerRepoCommands  []string `yaml:"inner_repo_commands"`
+	RepoURL            string   `yaml:"repo_url" json:"repo_url"`
+	RepoName           string   `yaml:"repo_name" json:"repo_name"`
+	BranchOrCommitHash string   `yaml:"branch_or_commit_hash" json:"branch_or_commit_hash"`
+	InnerRepoCommands  []string `yaml:"inner_repo_commands" json:"inner_repo_commands"`
 }
 
 type WebhookHandler struct {
