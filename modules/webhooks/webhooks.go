@@ -136,11 +136,11 @@ func (handler *WebhookHandler) UpdateActive(route string, status bool) error {
 	return saveWebhook(filePath, webhook)
 }
 
-func (webhook *Webhook) RunInnerRepoCommands(handleCommand func(command string, output string, err error)) {
+func (webhook *Webhook) RunInnerRepoCommands(handleCommand func(repoName string, command string, output string, err error)) {
 	for _, repo := range webhook.Repos {
 		for _, command := range repo.InnerRepoCommands {
 			output, err := system.RunCommand("cd " + repo.RepoName + " && " + command)
-			handleCommand(command, output, err)
+			handleCommand(repo.RepoName, command, output, err)
 		}
 	}
 }

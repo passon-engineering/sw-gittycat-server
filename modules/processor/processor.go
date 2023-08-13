@@ -26,30 +26,29 @@ func processActionQueue(action actions.Action, app *application.Application) {
 	for _, repo := range action.Webhook.Repos {
 		git.CloneRepo(repo.RepoURL, repo.RepoName, app)
 		git.PullRepo(repo.RepoName, app)
-
-		commandHandler := func(command string, output string, err error) {
-			if err != nil {
-				success = false
-				output := fmt.Sprintf("'%s': Command '%s' failed: %v", repo.RepoName, command, err)
-				app.Logger.Entry(logger.Container{
-					Status:         logger.STATUS_ERROR,
-					Error:          output,
-					ProcessingTime: time.Since(startTime),
-				})
-			} else {
-				output := fmt.Sprintf("'%s': Command '%s' executed successfully, output: %s", repo.RepoName, command, output)
-				app.Logger.Entry(logger.Container{
-					Status:         logger.STATUS_INFO,
-					Info:           output,
-					ProcessingTime: time.Since(startTime),
-				})
-			}
-		}
-
-		action.Webhook.RunInnerRepoCommands(commandHandler)
 	}
 
-	commandHandler := func(command string, output string, err error) {
+	commandHandlerInner := func(repoName string, command string, output string, err error) {
+		if err != nil {
+			success = false
+			output := fmt.Sprintf("'%s': Command '%s' failed: %v", repoName, command, err)
+			app.Logger.Entry(logger.Container{
+				Status:         logger.STATUS_ERROR,
+				Error:          output,
+				ProcessingTime: time.Since(startTime),
+			})
+		} else {
+			output := fmt.Sprintf("'%s': Command '%s' executed successfully, output: %s", repoName, command, output)
+			app.Logger.Entry(logger.Container{
+				Status:         logger.STATUS_INFO,
+				Info:           output,
+				ProcessingTime: time.Since(startTime),
+			})
+		}
+	}
+	action.Webhook.RunInnerRepoCommands(commandHandlerInner)
+
+	commandHandlerComposer := func(command string, output string, err error) {
 		if err != nil {
 			success = false
 			output := fmt.Sprintf("'%s': Command '%s' failed: %v", action.Webhook.BuildName, command, err)
@@ -78,7 +77,7 @@ func processActionQueue(action actions.Action, app *application.Application) {
 		}
 	}
 
-	action.Webhook.RunComposerCommands(commandHandler)
+	action.Webhook.RunComposerCommands(commandHandlerComposer)
 
 	elapsedTime := time.Since(startTime)
 	action.ProcessingTime = elapsedTime.String()
