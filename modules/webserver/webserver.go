@@ -24,7 +24,7 @@ func Init(app *application.Application) {
 	router.NotFoundHandler = http.HandlerFunc(handleRoot(app))
 	router.HandleFunc("/webhooks", handleWebhooks(app))
 	router.HandleFunc("/webhooks/refresh", handleWebhooksRefresh(app))
-	router.HandleFunc("/webhooks/{repo_name}/{operation}", handleWebhooksRepoNameOperation(app))
+	router.HandleFunc("/webhooks/{build_name}/{operation}", handleWebhooksRepoNameOperation(app))
 	router.HandleFunc("/repositories/stats", handleRepositoriesStats(app))
 	router.HandleFunc("/actions", handleActions(app))
 	router.HandleFunc("/actions/stats", handleActionsStats(app))

@@ -8,38 +8,66 @@
           <th>Build</th>
           <th>Route</th>
           <th>Status</th>
-          <th>Action</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(webhook, webhookKey) in webhooks" :key="webhookKey">
-          <td>{{ webhook.build_name }}</td>
-          <td>{{ webhook.route }}</td>       
-          <td :style="{color: webhook.active ? 'green' : 'red'}"><b>{{ webhook.active ? 'Active' : 'Inactive' }}</b></td>
-          <td>
-            <button class="toggle-btn" @click="toggleActive(webhook.repo_name)">
-              {{ webhook.active ? 'Deactivate' : 'Activate' }}
-            </button>
-          </td>
-        </tr>
+        <template v-for="(webhook, webhookKey) in webhooks" :key="webhookKey">
+          <tr>
+            <td>{{ webhook.build_name }}</td>
+            <td>{{ webhook.route }}</td>
+            <td :style="{color: webhook.active ? 'green' : 'red'}"><b>{{ webhook.active ? 'Active' : 'Inactive' }}</b></td>
+            <td>
+              <button class="toggle-expansion" @click="toggleRowExpansion(webhookKey)">Toggle Details</button>
+              &nbsp;&nbsp;
+              <button class="toggle-active" 
+                :style="{ backgroundColor: webhook.active ? 'red' : 'green' }"
+                @click="toggleActive(webhook.build_name)">
+                {{ webhook.active ? 'Deactivate' : 'Activate' }}
+              </button>
+            </td>
+          </tr>
+          <tr v-if="expandedRows[webhookKey]">
+            <td colspan="4">
+              <div><b>Composer Commands:</b></div>
+              <div v-for="command in webhook.composer_commands" :key="command">&nbsp;&nbsp;&nbsp;&nbsp;{{ command }}</div>             
+              <div v-for="(repo, repoKey) in webhook.repos" :key="repoKey">
+                <br>
+                <div><b>Repo URL:</b> {{ repo.repo_url }}</div>
+                <div><b>Repo Name:</b> {{ repo.repo_name }}</div>
+                <div><b>Branch or Commit Hash:</b> {{ repo.branch_or_commit_hash }}</div>
+                <div><b>Inner Repo Commands:</b></div>
+                <div v-for="command in repo.inner_repo_commands" :key="command">&nbsp;&nbsp;&nbsp;&nbsp;{{ command }}</div>  
+              </div>
+            </td>
+          </tr>
+        </template>
       </tbody>
     </table>
   </div>
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { ref, defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'WebhookTable',
   props: ['webhooks'],
   setup(props, { emit }) {
-    const toggleActive = (repo_name) => {
-      emit('toggleActive', repo_name)
+    const expandedRows = ref({})
+
+    const toggleActive = (webhookKey) => {
+      emit('toggleActive', webhookKey)
+    }
+
+    const toggleRowExpansion = (webhookKey) => {
+      expandedRows.value[webhookKey] = !expandedRows.value[webhookKey]
     }
 
     return {
-      toggleActive
+      toggleActive,
+      toggleRowExpansion,
+      expandedRows
     }
   }
 })
@@ -48,7 +76,7 @@ export default defineComponent({
 <style scoped>
 .title {
   text-align: center;
-  color: #00ffff; /* Cyan text color */
+  color: #fff;
   margin-bottom: 20px;
 }
 
@@ -59,22 +87,38 @@ export default defineComponent({
 .webhook-table table {
   width: 100%;
   border-collapse: collapse;
-  color: #00ffff; /* Cyan text color */
+  color: #fff; 
 }
 
 .webhook-table th,
 .webhook-table td {
   padding: 5px;
   text-align: left;
-  border-bottom: 2px solid #ff00ff; /* Magenta border color */
-  font-size: 0.9em; /* Smaller font size */
+  border-bottom: 2px solid #ffe347; /* border color */
+  font-size: 0.9em; 
 }
 
 .webhook-table th {
   font-weight: 600;
 }
 
-.toggle-btn {
+.toggle-expansion {
+  font-weight: bold;
+  background-color: #247ba0;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.toggle-expansion:hover {
+  transform: translateY(-2px);
+}
+
+.toggle-active {
+  font-weight: bold;
   background-color: #ff4b4b;
   color: #fff;
   border: none;
@@ -84,8 +128,7 @@ export default defineComponent({
   transition: all 0.3s ease-in-out;
 }
 
-.toggle-btn:hover {
-  background-color: #ff7b7b;
+.toggle-active:hover {
   transform: translateY(-2px);
 }
 

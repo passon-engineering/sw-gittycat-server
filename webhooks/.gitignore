@@ -2,4 +2,4 @@
 *.yaml
 
 # Except for:
-!sw-gittycat-server.yaml
+!gittycat-latest.yaml

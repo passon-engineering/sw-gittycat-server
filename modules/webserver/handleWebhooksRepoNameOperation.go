@@ -18,10 +18,10 @@ func handleWebhooksRepoNameOperation(app *application.Application) func(http.Res
 	return func(w http.ResponseWriter, r *http.Request) {
 		startTime := time.Now()
 		vars := mux.Vars(r)
-		repoName := vars["repo_name"]
+		buildName := vars["build_name"]
 		operation := vars["operation"]
 
-		webhook, exists := app.WebhookHandler.Webhooks[repoName]
+		webhook, exists := app.WebhookHandler.Webhooks[buildName]
 		if !exists {
 			http.Error(w, "Repo not found", http.StatusNotFound)
 			app.Logger.Entry(logger.Container{
@@ -41,7 +41,7 @@ func handleWebhooksRepoNameOperation(app *application.Application) func(http.Res
 				state = true
 			}
 
-			err := app.WebhookHandler.UpdateActive(repoName, state)
+			err := app.WebhookHandler.UpdateActive(buildName, state)
 			if err != nil {
 				app.Logger.Entry(logger.Container{
 					Status:         logger.STATUS_ERROR,
