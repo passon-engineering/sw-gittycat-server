@@ -145,6 +145,33 @@ body {
   animation: fadeIn 2s;
 }
 
+.btn {
+  font-weight: bold;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn:hover {
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.6);
+}
+
+.btn-right{
+  float: right;
+  margin-right: 5px;
+}
+
+.btn-green {background-color: #63c132;}
+.btn-pink {background-color: #ff00ff;}
+.btn-mustard {background-color: #ffe347;}
+.btn-red {background-color: #ff4b4b;}
+
+
+
+
 @keyframes fadeIn {
   0% {opacity: 0;}
   100% {opacity: 1;}

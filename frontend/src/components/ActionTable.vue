@@ -75,7 +75,7 @@ export default defineComponent({
 <style scoped>
 .title {
   text-align: center;
-  color: #00ffff; /* Cyan text color */
+  color: #fff;
   margin-bottom: 20px;
 }
 
@@ -86,14 +86,14 @@ export default defineComponent({
 .action-table table {
   width: 100%;
   border-collapse: collapse;
-  color: #00ffff; /* Cyan text color */
+  color: #fff;
 }
 
 .action-table th,
 .action-table td {
   padding: 5px;
   text-align: left;
-  border-bottom: 2px solid #ff00ff; /* Magenta border color */
+  border-bottom: 2px solid #ffe347;
   font-size: 0.9em; /* Smaller font size */
 }
 

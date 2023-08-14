@@ -7,7 +7,7 @@
         <td class="cell-directory-count">Directory Count: {{ stats.directory_count}}</td>
         <td class="cell-total-size">Total Size: {{ formatSize(stats.total_size) }}</td>
         <td class="cell-delete">
-          <button class="delete-button" @click="deleteAction(stats.actionEndpoint)">Delete</button>
+          <button class="btn btn-red btn-right" @click="deleteAction(stats.actionEndpoint)">Delete</button>
         </td>
       </tr>
     </table>
@@ -56,19 +56,14 @@ export default defineComponent({
 .stats-table table {
   width: 100%;
   border-collapse: collapse;
-  color: #00ffff; /* Cyan text color */
+  color: #fff;
 }
 
 .stats-table td {
   padding: 5px;
   text-align: left;
-  border-bottom: 2px solid #ff00ff; /* Magenta border color */
+  border-bottom: 2px solid #ffe347; /* Magenta border color */
   font-size: 0.9em; /* Smaller font size */
-}
-
-.delete-button:hover {
-  background-color: #ff7b7b;
-  transform: translateY(-2px);
 }
 
 /* Specific cell widths */
@@ -87,18 +82,6 @@ export default defineComponent({
   width: 15%;
   padding-right: 5px; /* 5 pixels space from the right */
 }
-
-.delete-button {
-  float: right; /* This will align the button to the right */
-  background-color: #ff4b4b;
-  color: #fff;
-  border: none;
-  border-radius: 20px;
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-}
-
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {
