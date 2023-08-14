@@ -8,6 +8,8 @@ import (
 	"strings"
 	"sw-gittycat-server/modules/webhooks"
 	"sync"
+
+	"github.com/passon-engineering/sw-go-utility-lib/file"
 )
 
 type Action struct {
@@ -96,4 +98,18 @@ func (handler *ActionHandler) Add(a *Action) error {
 	}
 
 	return nil
+}
+
+func (handler *ActionHandler) DeleteAll() error {
+	handler.Lock()
+	defer handler.Unlock()
+
+	err := file.DeleteAllExceptIgnored(handler.Directory, nil)
+	if err != nil {
+		return err
+	} else {
+		// Clear the in-memory map
+		handler.Actions = make(map[string]*Action)
+		return nil
+	}
 }

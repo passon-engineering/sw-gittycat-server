@@ -66,9 +66,7 @@ func PullRepo(repoName string, app *application.Application) {
 	})
 }
 
-func DeleteAllRepositories(app *application.Application) {
-	startTime := time.Now()
-
+func DeleteAllRepositories(app *application.Application) error {
 	ignoreFiles := map[string]bool{
 		".gitignore": true,
 		// add more files to ignore here
@@ -76,16 +74,8 @@ func DeleteAllRepositories(app *application.Application) {
 
 	err := file.DeleteAllExceptIgnored(app.ServerPath+"/repositories/", ignoreFiles)
 	if err != nil {
-		app.Logger.Entry(logger.Container{
-			Status:         logger.STATUS_ERROR,
-			Error:          "Could not delete all repositories " + err.Error(),
-			ProcessingTime: time.Since(startTime),
-		})
+		return err
+	} else {
+		return nil
 	}
-
-	app.Logger.Entry(logger.Container{
-		Status:         logger.STATUS_INFO,
-		Info:           "All repositories deleted",
-		ProcessingTime: time.Since(startTime),
-	})
 }

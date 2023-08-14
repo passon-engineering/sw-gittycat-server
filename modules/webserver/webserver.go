@@ -26,8 +26,10 @@ func Init(app *application.Application) {
 	router.HandleFunc("/webhooks/refresh", handleWebhooksRefresh(app))
 	router.HandleFunc("/webhooks/{build_name}/{operation}", handleWebhooksRepoNameOperation(app))
 	router.HandleFunc("/repositories/stats", handleRepositoriesStats(app))
+	router.HandleFunc("/repositories/delete", handleRepositoriesDelete(app))
 	router.HandleFunc("/actions", handleActions(app))
 	router.HandleFunc("/actions/stats", handleActionsStats(app))
+	router.HandleFunc("/actions/delete", handleActionsDelete(app))
 
 	err := server.ListenAndServe()
 	if err != nil {

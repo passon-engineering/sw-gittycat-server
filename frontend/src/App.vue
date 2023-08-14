@@ -56,14 +56,15 @@ export default {
       await fetchActions()
     }
 
-    const deleteActions = async (actionEndpoint) => {
-      console.log("deleteActions")
-      console.log(actionEndpoint)
+    const deleteActions = async () => {
+      await axios.get(`/actions/delete`)
+      await fetchActions()
+      await fetchActionsStats()
     }
 
-    const deleteRepositories = async (actionEndpoint) => {
-      console.log("deleteRepositories")
-      console.log(actionEndpoint)
+    const deleteRepositories = async () => {
+      await axios.get(`/repositories/delete`)
+      await fetchRepositoriesStats()
     }
 
     const deleteArtifacts = async (actionEndpoint) => {
