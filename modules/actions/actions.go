@@ -104,7 +104,12 @@ func (handler *ActionHandler) DeleteAll() error {
 	handler.Lock()
 	defer handler.Unlock()
 
-	err := file.DeleteAllExceptIgnored(handler.Directory, nil)
+	ignoreFiles := map[string]bool{
+		".gitignore": true,
+		// add more files to ignore here
+	}
+
+	err := file.DeleteAllExceptIgnored(handler.Directory, ignoreFiles)
 	if err != nil {
 		return err
 	} else {
