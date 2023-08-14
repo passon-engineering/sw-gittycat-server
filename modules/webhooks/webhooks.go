@@ -139,7 +139,7 @@ func (handler *WebhookHandler) UpdateActive(route string, status bool) error {
 func (webhook *Webhook) RunInnerRepoCommands(handleCommand func(repoName string, command string, output string, err error)) {
 	for _, repo := range webhook.Repos {
 		for _, command := range repo.InnerRepoCommands {
-			output, err := system.RunCommand("cd " + repo.RepoName + " && " + command)
+			output, err := system.RunCommand("cd repositories/" + repo.RepoName + " && " + command)
 			handleCommand(repo.RepoName, command, output, err)
 		}
 	}
