@@ -9,7 +9,7 @@
           <th @click="sortBy('success')">Status</th>
           <th @click="sortBy('last_call')">Last Call</th>
           <th @click="sortBy('processing_time')">Processing Time</th>
-          <th>Action</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -19,7 +19,7 @@
           <td>{{ action.last_call }}</td>
           <td>{{ action.processing_time }}</td>
           <td>
-            <button class="rerun-btn" @click="rerunAction(action.webhook.build_name)">
+            <button class="btn btn-red btn-right" @click="rerunAction(action.webhook.build_name)">
               Re-run
             </button>
           </td>
@@ -99,21 +99,6 @@ export default defineComponent({
 
 .action-table th {
   font-weight: 600;
-}
-
-.rerun-btn {
-  background-color: #ff4b4b;
-  color: #fff;
-  border: none;
-  border-radius: 20px;
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: all 0.3s ease-in-out;
-}
-
-.rerun-btn:hover {
-  background-color: #ff7b7b;
-  transform: translateY(-2px);
 }
 
 /* Responsive Design */
