@@ -5,7 +5,7 @@
     <table>
       <thead>
         <tr>
-          <th @click="sortBy('webhook.repo_name')">Repository Name</th>
+          <th @click="sortBy('webhook.build_name')">Build Name</th>
           <th @click="sortBy('success')">Status</th>
           <th @click="sortBy('last_call')">Last Call</th>
           <th @click="sortBy('processing_time')">Processing Time</th>

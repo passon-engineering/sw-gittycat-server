@@ -5,7 +5,7 @@
     <table>
       <thead>
         <tr>
-          <th>Build</th>
+          <th>Build Name</th>
           <th>Route</th>
           <th>Status</th>
           <th></th>
