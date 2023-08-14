@@ -14,12 +14,12 @@
       </thead>
       <tbody>
         <tr v-for="(action, key) in sortedActions" :key="key">
-          <td>{{ action.webhook.repo_name }}</td>
+          <td>{{ action.webhook.build_name }}</td>
           <td :style="{color: action.success ? 'green' : 'red'}"><b>{{ action.success ? 'Success' : 'Failure' }}</b></td>
           <td>{{ action.last_call }}</td>
           <td>{{ action.processing_time }}</td>
           <td>
-            <button class="rerun-btn" @click="rerunAction(action.webhook.repo_name)">
+            <button class="rerun-btn" @click="rerunAction(action.webhook.build_name)">
               Re-run
             </button>
           </td>
@@ -57,8 +57,8 @@ export default defineComponent({
     },
   },
   methods: {
-    rerunAction(repo_name) {
-      this.$emit('rerunAction', repo_name)
+    rerunAction(build_name) {
+      this.$emit('rerunAction', build_name)
     },
     sortBy(column) {
       if (this.sortByColumn === column) {
