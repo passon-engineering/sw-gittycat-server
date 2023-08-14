@@ -11,8 +11,3 @@ repos:
       inner_repo_commands:
         - echo sw-gittycat-server inner repo commands
         - echo test
-    - repo_url: git@github.com:passon-engineering/sw-gittycat-server.git
-      repo_name: sw-gittycat-server
-      branch_or_commit_hash: LATEST
-      inner_repo_commands:
-        - echo sw-gittycat-server inner repo commands
