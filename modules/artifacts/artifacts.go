@@ -6,7 +6,7 @@ import (
 	"github.com/passon-engineering/sw-go-utility-lib/file"
 )
 
-func DeleteAllArtifacts(app *application.Application) error {
+func DeleteAll(app *application.Application) error {
 	ignoreFiles := map[string]bool{
 		".gitignore": true,
 		// add more files to ignore here
