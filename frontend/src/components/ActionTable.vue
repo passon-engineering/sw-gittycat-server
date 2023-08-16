@@ -19,9 +19,8 @@
           <td>{{ action.last_call }}</td>
           <td>{{ action.processing_time }}</td>
           <td>
-            <button class="btn btn-red btn-right" @click="rerunAction(action.webhook.build_name)">
-              Re-run
-            </button>
+            <button class="btn btn-pink btn-right" @click="toggleRowExpansion(key)">Toggle Details</button>
+            <button class="btn btn-red btn-right" @click="rerunAction(action.webhook.build_name)">Re-run</button>
           </td>
         </tr>
       </tbody>
