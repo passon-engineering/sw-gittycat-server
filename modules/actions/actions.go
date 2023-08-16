@@ -19,6 +19,7 @@ type Action struct {
 	LastCall       string                 `yaml:"last_call" json:"last_call"`
 	ProcessingTime string                 `yaml:"processing_time" json:"processing_time"`
 	FileName       string                 `yaml:"file_name" json:"file_name"`
+	Output         string                 `yaml:"output" json:"output"`
 }
 
 type ActionHandler struct {
@@ -117,4 +118,11 @@ func (handler *ActionHandler) DeleteAll() error {
 		handler.Actions = make(map[string]*Action)
 		return nil
 	}
+}
+
+func (action *Action) AppendOutput(stringsToAppend ...string) {
+	// Concatenate the strings passed as parameters
+	appendedString := strings.Join(stringsToAppend, " ")
+
+	action.Output += "\n" + appendedString
 }
