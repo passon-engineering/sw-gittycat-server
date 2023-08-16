@@ -67,9 +67,9 @@ export default {
       await fetchRepositoriesStats()
     }
 
-    const deleteArtifacts = async (actionEndpoint) => {
-      console.log("deleteArtifacts")
-      console.log(actionEndpoint)
+    const deleteArtifacts = async () => {
+      await axios.get(`/artifacts/delete`)
+      await fetchArtifactsStats()
     }
 
     const fetchWebhooks = async () => {
