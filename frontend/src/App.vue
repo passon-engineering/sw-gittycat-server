@@ -86,21 +86,18 @@ export default {
       // Fetch stats data for actions
       const response = await axios.get('/actions/stats');
       actionsStats.value = response.data;
-      console.log(actionsStats.value)
     }
 
     const fetchRepositoriesStats = async () => {
       // Fetch stats data for repositories
       const response = await axios.get('/repositories/stats');
       repositoriesStats.value = response.data;
-      console.log(repositoriesStats.value)
     }
 
     const fetchArtifactsStats = async () => {
       // Fetch stats data for artifacts
       const response = await axios.get('/artifacts/stats');
       artifactsStats.value = response.data;
-      console.log(artifactsStats.value)
     }
 
     return {
