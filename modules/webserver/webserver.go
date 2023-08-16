@@ -31,6 +31,7 @@ func Init(app *application.Application) {
 	router.HandleFunc("/actions/stats", handleActionsStats(app))
 	router.HandleFunc("/actions/delete", handleActionsDelete(app))
 	router.HandleFunc("/artifacts/delete", handleArtifactsDelete(app))
+	router.HandleFunc("/artifacts/stats", handleArtifactsStats(app))
 
 	err := server.ListenAndServe()
 	if err != nil {
