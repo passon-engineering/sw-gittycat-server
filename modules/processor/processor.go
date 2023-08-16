@@ -79,9 +79,7 @@ func processActionQueue(action actions.Action, app *application.Application) {
 
 	action.Webhook.RunComposerCommands(commandHandlerComposer)
 
-	elapsedTime := time.Since(startTime)
-	action.ProcessingTime = elapsedTime.String()
-
+	action.ProcessingTime = time.Since(startTime).String()
 	action.Success = success
 
 	after, ok := action.RequestBody["after"].(string)
