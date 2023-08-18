@@ -76,10 +76,11 @@ export default defineComponent({
       this.sortByColumn = column
     },
     toggleRowExpansion(key) {
-      // This method toggles the state of a given row (specified by 'key')
-      // If the row is currently expanded, it collapses it.
-      // If the row is currently collapsed, it expands it.
-      this.$set(this.expandedRows, key, !this.expandedRows[key]);
+      // Toggle the state of a given row specified by 'key'
+      this.expandedRows[key] = !this.expandedRows[key];
+      
+      // Assign a new object to force Vue to pick up the change
+      this.expandedRows = { ...this.expandedRows };
     }
   },
 })
