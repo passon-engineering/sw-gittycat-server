@@ -52,6 +52,7 @@ func processActionQueue(action actions.Action, app *application.Application) {
 			})
 		}
 	}
+	action.AppendOutput("INNER COMMANDS")
 	action.Webhook.RunInnerRepoCommands(commandHandlerInner)
 
 	commandHandlerComposer := func(command string, output string, err error) {
@@ -66,7 +67,7 @@ func processActionQueue(action actions.Action, app *application.Application) {
 				ProcessingTime: time.Since(startTime),
 			})
 		} else {
-			output := fmt.Sprintf("'%s': Command '%s' executed successfully, output: %s, processing time: %s", action.Webhook.BuildName, command, output, action.ProcessingTime)
+			output := fmt.Sprintf("'%s': Command '%s' executed successfully, output: %s", action.Webhook.BuildName, command, output)
 
 			action.AppendOutput(output)
 			app.Logger.Entry(logger.Container{
@@ -76,7 +77,7 @@ func processActionQueue(action actions.Action, app *application.Application) {
 			})
 		}
 	}
-
+	action.AppendOutput("COMPOSER COMMANDS")
 	action.Webhook.RunComposerCommands(commandHandlerComposer)
 
 	action.ProcessingTime = time.Since(startTime).String()
