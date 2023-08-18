@@ -13,16 +13,23 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(action, key) in sortedActions" :key="key">
-          <td>{{ action.webhook.build_name }}</td>
-          <td :style="{color: action.success ? 'green' : 'red'}"><b>{{ action.success ? 'Success' : 'Failure' }}</b></td>
-          <td>{{ action.last_call }}</td>
-          <td>{{ action.processing_time }}</td>
-          <td>
-            <button class="btn btn-pink btn-right" @click="toggleRowExpansion(key)">Toggle Details</button>
-            <button class="btn btn-red btn-right" @click="rerunAction(action.webhook.build_name)">Re-run</button>
-          </td>
-        </tr>
+        <template v-for="(action, key) in sortedActions" :key="key">
+          <tr>  
+            <td>{{ action.webhook.build_name }}</td>
+            <td :style="{color: action.success ? 'green' : 'red'}"><b>{{ action.success ? 'Success' : 'Failure' }}</b></td>
+            <td>{{ action.last_call }}</td>
+            <td>{{ action.processing_time }}</td>
+            <td>
+              <button class="btn btn-pink btn-right" @click="toggleRowExpansion(key)">Toggle Details</button>
+              <button class="btn btn-red btn-right" @click="rerunAction(action.webhook.build_name)">Re-run</button>
+            </td>
+          </tr>
+          <tr v-if="expandedRows[key]">
+            <td colspan="4">
+              <div>{{ action.output }}</div>
+            </td>
+          </tr>
+        </template>
       </tbody>
     </table>
   </div>
