@@ -25,7 +25,7 @@
             </td>
           </tr>
           <tr v-if="expandedRows[key]">
-            <td colspan="4">
+            <td colspan="5">
               <div>{{ action.output }}</div>
             </td>
           </tr>
