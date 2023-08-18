@@ -45,6 +45,7 @@ export default defineComponent({
     return {
       sortOrder: -1, // 1 for ascending, -1 for descending
       sortByColumn: 'last_call', // Default sorting column
+      expandedRows: {}, // Add this line to store the state of expanded/collapsed rows
     }
   },
   computed: {
@@ -74,6 +75,12 @@ export default defineComponent({
       }
       this.sortByColumn = column
     },
+    toggleRowExpansion(key) {
+      // This method toggles the state of a given row (specified by 'key')
+      // If the row is currently expanded, it collapses it.
+      // If the row is currently collapsed, it expands it.
+      this.$set(this.expandedRows, key, !this.expandedRows[key]);
+    }
   },
 })
 </script>
