@@ -162,13 +162,10 @@ body {
   margin-right: 5px;
 }
 
-.btn-green {background-color: #63c132;}
+.btn-green {background-color: green;}
 .btn-pink {background-color: #ff00ff;}
 .btn-mustard {background-color: #ffe347;}
-.btn-red {background-color: #ff4b4b;}
-
-
-
+.btn-red {background-color: red;}
 
 @keyframes fadeIn {
   0% {opacity: 0;}

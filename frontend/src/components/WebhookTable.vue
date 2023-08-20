@@ -12,7 +12,12 @@
         </tr>
       </thead>
       <tbody>
-        <template v-for="(webhook, webhookKey) in webhooks" :key="webhookKey">
+        <!-- Displaying the message if there are no webhooks -->
+        <tr v-if="webhooks.length === 0">
+          <td colspan="4">No webhooks available yet.</td>
+        </tr>
+        <!-- Displaying the webhooks -->
+        <template v-else v-for="(webhook, webhookKey) in webhooks" :key="webhookKey">
           <tr>
             <td class="cell-large">{{ webhook.build_name }}</td>
             <td class="cell-large">{{ webhook.route }}</td>

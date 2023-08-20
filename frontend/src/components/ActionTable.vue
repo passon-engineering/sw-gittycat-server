@@ -13,8 +13,13 @@
         </tr>
       </thead>
       <tbody>
-        <template v-for="(action, key) in sortedActions" :key="key">
-          <tr>  
+        <!-- Displaying the message if there are no actions -->
+        <tr v-if="sortedActions.length === 0">
+          <td colspan="5">No actions available yet.</td>
+        </tr>
+        <!-- Displaying the sorted actions -->
+        <template v-else v-for="(action, key) in sortedActions" :key="key">
+          <tr>
             <td>{{ action.webhook.build_name }}</td>
             <td :style="{color: action.success ? 'green' : 'red'}"><b>{{ action.success ? 'Success' : 'Failure' }}</b></td>
             <td>{{ action.last_call }}</td>
