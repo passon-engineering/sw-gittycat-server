@@ -107,7 +107,7 @@ export default defineComponent({
 .action-table td {
   padding: 5px;
   text-align: left;
-  border-bottom: 2px solid #ffe347;
+  border-bottom: 1px solid #ffe347;
   font-size: 0.9em; /* Smaller font size */
 }
 

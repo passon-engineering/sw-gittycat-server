@@ -62,7 +62,7 @@ export default defineComponent({
 .stats-table td {
   padding: 5px;
   text-align: left;
-  border-bottom: 2px solid #ffe347; /* Magenta border color */
+  border-bottom: 1px solid #ffe347; /* Magenta border color */
   font-size: 0.9em; /* Smaller font size */
 }
 
