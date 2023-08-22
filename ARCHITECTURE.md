@@ -24,19 +24,23 @@ Description of tasks depending on states
   - Display 'PUBLIC' SSH key to user / logger (useful for git repository access configuration)
 
 2. Initialize Webhooks
+  - Create a webhook handler
   - Read and parse all available *.yaml webhooks from ./webhooks/. These are the webhooks the server will be listening for
   - Store all available webhooks in the `global app object`
 
-3. Initialize Processor
+3. Initialize Actions
+  - Create an action handler
+  - Read and parse all available *.json from ./actions/. These are the actions the server has allready processed
+  - Store all available actions in the `global app object`
+
+4. Initialize Processor
   - Create a queue buffer (channel) for incomming actions to be processed 
 
-4. Initialize Webserver
-  - Create handler to read static files from ./frontend/dist/ and listen to : '/'
-  - Create handler to listen to: '/webhooks' 
-  - Create handler to listen to: '/webhooks/refresh'
-  - Create handler to listen to: '/webhooks/{repo_name}/{action}'
+5. Initialize Webserver
+  - Create handlers to read static files and also other specific operations
 
 ### Runtime Actions
+(TO BE RE-DEFINED ONCE APP REACHED IT'S FIRST RELEASE)
 --> TRIGGER -> /*
   - Read requested file from given path
   - Send file content to browser 
