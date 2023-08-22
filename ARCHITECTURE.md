@@ -27,13 +27,10 @@ Description of tasks depending on states
   - Read and parse all available *.yaml webhooks from ./webhooks/. These are the webhooks the server will be listening for
   - Store all available webhooks in the `global app object`
 
-3. Initialize Repositories
-  - Range over all available webhooks from the `global app object` and clone the repository of each webhook in the ./repositories/ folder
-
-4. Initialize Processor
+3. Initialize Processor
   - Create a queue buffer (channel) for incomming actions to be processed 
 
-5. Initialize Webserver
+4. Initialize Webserver
   - Create handler to read static files from ./frontend/dist/ and listen to : '/'
   - Create handler to listen to: '/webhooks' 
   - Create handler to listen to: '/webhooks/refresh'
