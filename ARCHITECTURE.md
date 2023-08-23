@@ -41,6 +41,7 @@ Description of tasks depending on states
 
 ### Runtime Actions
 (TO BE RE-DEFINED ONCE APP REACHED IT'S FIRST RELEASE)
+
 --> TRIGGER -> /*
   - Read requested file from given path
   - Send file content to browser 
