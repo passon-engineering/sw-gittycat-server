@@ -17,7 +17,7 @@ func handleActions(app *application.Application) func(http.ResponseWriter, *http
 	return func(w http.ResponseWriter, r *http.Request) {
 		startTime := time.Now()
 
-		const ActionsPerPage = 0 // This defines how many actions should be in one page
+		const ActionsPerPage = 5 // This defines how many actions should be in one page
 
 		vars := mux.Vars(r)
 		pageStr := vars["page"]
