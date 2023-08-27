@@ -8,7 +8,7 @@
     <action-table class="fadein" :actions="actions" @rerunAction="rerunAction" />
     <div v-if="totalPages > 1" class="pagination">
       <button class="btn" @click="changePage(currentPage - 1)" :disabled="currentPage === 1">Previous</button>
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <span class="text-info">Page {{ currentPage }} of {{ totalPages }}</span>
       <button class="btn" @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">Next</button>
     </div>
     <matrix-effect v-if="showMatrix" />
@@ -185,6 +185,10 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 10px 0;
+}
+
+.text-info {
+  font-size: 0.9em; 
 }
 
 @keyframes fadeIn {
