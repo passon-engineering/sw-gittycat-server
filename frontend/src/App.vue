@@ -42,10 +42,8 @@ export default {
     const artifactsStats = ref([]);
 
     onMounted(() => {
-      // Fetch data for webhooks and actions
       fetchWebhooks()
       fetchActions()
-      // Fetch stats data for each endpoint
       fetchActionsStats()
       fetchRepositoriesStats()
       fetchArtifactsStats()
@@ -85,25 +83,22 @@ export default {
 
     const fetchActions = async (page = 1) => {
       const response = await axios.get(`/actions/${page}`);
-      actions.value = response.data.data;  // assuming your data is in a data property
-      totalPages.value = response.data.totalPages;  // assuming the backend sends total pages
+      actions.value = response.data.data;
+      totalPages.value = response.data.totalPages;
       currentPage.value = page;
     }
 
     const fetchActionsStats = async () => {
-      // Fetch stats data for actions
       const response = await axios.get('/actions/stats');
       actionsStats.value = response.data;
     }
 
     const fetchRepositoriesStats = async () => {
-      // Fetch stats data for repositories
       const response = await axios.get('/repositories/stats');
       repositoriesStats.value = response.data;
     }
 
     const fetchArtifactsStats = async () => {
-      // Fetch stats data for artifacts
       const response = await axios.get('/artifacts/stats');
       artifactsStats.value = response.data;
     }
