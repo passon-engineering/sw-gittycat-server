@@ -51,8 +51,24 @@ func handleActions(app *application.Application) func(http.ResponseWriter, *http
 			actionsToReturn[key] = app.ActionHandler.Actions[key]
 		}
 
+		// Calculate total pages
+		totalActions := len(keys)
+		totalPages := totalActions / ActionsPerPage
+		if totalActions%ActionsPerPage != 0 {
+			totalPages++
+		}
+
+		// Create a response structure
+		response := struct {
+			Data       map[string]*actions.Action `json:"data"`
+			TotalPages int                        `json:"totalPages"`
+		}{
+			Data:       actionsToReturn,
+			TotalPages: totalPages,
+		}
+
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(actionsToReturn)
+		json.NewEncoder(w).Encode(response)
 
 		app.Logger.Entry(logger.Container{
 			Status:         logger.STATUS_INFO,

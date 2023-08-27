@@ -6,6 +6,11 @@
     <stats-table :title="'Artifacts'" :stats="artifactsStats" @deleteAction="deleteArtifacts" />
     <webhook-table class="fadein" :webhooks="webhooks" @toggleActive="toggleActive" />
     <action-table class="fadein" :actions="actions" @rerunAction="rerunAction" />
+    <div v-if="totalPages > 1" class="pagination">
+      <button class="btn" @click="changePage(currentPage - 1)" :disabled="currentPage === 1">Previous</button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button class="btn" @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">Next</button>
+    </div>
     <matrix-effect v-if="showMatrix" />
   </div>
 </template>
@@ -30,7 +35,8 @@ export default {
     const webhooks = ref({})
     const actions = ref({})
     const showMatrix = ref(false)
-    
+    const currentPage = ref(1);
+    const totalPages = ref(0);
     const actionsStats = ref([]);
     const repositoriesStats = ref([]);
     const artifactsStats = ref([]);
@@ -77,9 +83,11 @@ export default {
       webhooks.value = response.data
     }
 
-    const fetchActions = async () => {
-      const response = await axios.get('/actions')
-      actions.value = response.data
+    const fetchActions = async (page = 1) => {
+      const response = await axios.get(`/actions/${page}`);
+      actions.value = response.data.data;  // assuming your data is in a data property
+      totalPages.value = response.data.totalPages;  // assuming the backend sends total pages
+      currentPage.value = page;
     }
 
     const fetchActionsStats = async () => {
@@ -100,6 +108,13 @@ export default {
       artifactsStats.value = response.data;
     }
 
+    const changePage = (page) => {
+      if (page >= 1 && page <= totalPages.value) {
+          fetchActions(page);
+      }
+    }
+
+
     return {
       webhooks,
       actions,
@@ -111,7 +126,10 @@ export default {
       artifactsStats,
       deleteActions,
       deleteRepositories,
-      deleteArtifacts
+      deleteArtifacts,
+      changePage,
+      currentPage,
+      totalPages
     }
   }
 }
@@ -166,6 +184,13 @@ body {
 .btn-pink {background-color: #ff00ff;}
 .btn-mustard {background-color: #ffe347;}
 .btn-red {background-color: red;}
+
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
 
 @keyframes fadeIn {
   0% {opacity: 0;}
