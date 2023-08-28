@@ -62,8 +62,8 @@ export default defineComponent({
 .stats-table td {
   padding: 5px;
   text-align: left;
-  border-bottom: 1px solid #ffe347; /* Magenta border color */
-  font-size: 0.9em; /* Smaller font size */
+  border-bottom: 1px solid #ffe347;
+  font-size: 0.9em;
 }
 
 /* Specific cell widths */
@@ -80,10 +80,9 @@ export default defineComponent({
 
 .cell-delete {
   width: 15%;
-  padding-right: 5px; /* 5 pixels space from the right */
+  padding-right: 5px;
 }
 
-/* Responsive Design */
 @media screen and (max-width: 768px) {
   .stats-table td {
     padding: 8px;
