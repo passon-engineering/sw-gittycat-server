@@ -7,9 +7,9 @@
     <webhook-table class="fadein" :webhooks="webhooks" @toggleActive="toggleActive" />
     <action-table class="fadein" :actions="actions" @rerunAction="rerunAction" />
     <div v-if="totalPages > 1" class="pagination">
-      <button class="btn" @click="changePage(currentPage - 1)" :disabled="currentPage === 1">Previous</button>
+      <button class="btn" style="margin-left: 5px;" @click="changePage(currentPage - 1)" :disabled="currentPage === 1">Previous</button>
       <span class="text-info">Page {{ currentPage }} of {{ totalPages }}</span>
-      <button class="btn" @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">Next</button>
+      <button class="btn" style="margin-right: 10px;" @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">Next</button>
     </div>
     <matrix-effect v-if="showMatrix" />
   </div>
