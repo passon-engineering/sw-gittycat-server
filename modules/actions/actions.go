@@ -5,11 +5,9 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sort"
 	"strings"
 	"sw-gittycat-server/modules/webhooks"
 	"sync"
-	"time"
 
 	"github.com/passon-engineering/sw-go-utility-lib/file"
 )
@@ -49,8 +47,8 @@ func (handler *ActionHandler) Reload() error {
 		return fmt.Errorf("error reading directory: %w", err)
 	}
 
-	// Create a slice of actions for sorting
-	var actionsSlice []*Action
+	handler.Actions = make(map[string]*Action)
+
 	for _, file := range files {
 		if !file.IsDir() && strings.HasSuffix(file.Name(), ".json") {
 			filePath := filepath.Join(handler.Directory, file.Name())
@@ -58,20 +56,9 @@ func (handler *ActionHandler) Reload() error {
 			if err != nil {
 				return fmt.Errorf("error loading action from %s: %w", file.Name(), err)
 			}
-			actionsSlice = append(actionsSlice, action)
+			handler.Actions[file.Name()] = action
 		}
 	}
-
-	// Sort the actions by last call
-	sortActionsByLastCall(actionsSlice)
-
-	// Rebuild the map in sorted order
-	sortedActions := make(map[string]*Action)
-	for _, action := range actionsSlice {
-		sortedActions[action.FileName] = action
-	}
-
-	handler.Actions = sortedActions
 
 	return nil
 }
@@ -89,19 +76,6 @@ func loadAction(filePath string) (*Action, error) {
 	}
 
 	return &action, nil
-}
-
-func sortActionsByLastCall(actions []*Action) {
-	sort.Slice(actions, func(i, j int) bool {
-		t1, err1 := time.Parse(time.RFC3339, actions[i].LastCall)
-		t2, err2 := time.Parse(time.RFC3339, actions[j].LastCall)
-
-		if err1 != nil || err2 != nil {
-			return false // or handle the error as appropriate
-		}
-
-		return t1.After(t2)
-	})
 }
 
 func (handler *ActionHandler) Add(a *Action) error {
