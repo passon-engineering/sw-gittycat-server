@@ -27,32 +27,39 @@ func handleActions(app *application.Application) func(http.ResponseWriter, *http
 			return
 		}
 
-		// Create a slice of keys and sort them
-		keys := make([]string, 0, len(app.ActionHandler.Actions))
-		for key := range app.ActionHandler.Actions {
-			keys = append(keys, key)
+		// Create a slice of actions
+		actionsSlice := make([]*actions.Action, 0, len(app.ActionHandler.Actions))
+		for _, action := range app.ActionHandler.Actions {
+			actionsSlice = append(actionsSlice, action)
 		}
-		sort.Strings(keys) // Assuming alphanumeric order, adjust as necessary
+
+		// Sort actions by the LastCall date
+		sort.Slice(actionsSlice, func(i, j int) bool {
+			t1, err1 := time.Parse(time.RFC3339, actionsSlice[i].LastCall)
+			t2, err2 := time.Parse(time.RFC3339, actionsSlice[j].LastCall)
+
+			if err1 != nil || err2 != nil {
+				// Handle parsing error if necessary
+				return false
+			}
+
+			return t1.After(t2) // Change to t1.Before(t2) if you want oldest first
+		})
 
 		startIndex := (page - 1) * ActionsPerPage
 		endIndex := page * ActionsPerPage
-		if startIndex >= len(keys) {
-			http.Error(w, "Page number out of range", http.StatusNotFound)
-			return
+		if endIndex > len(actionsSlice) {
+			endIndex = len(actionsSlice)
 		}
 
-		if endIndex > len(keys) {
-			endIndex = len(keys)
-		}
-
-		// Return actions based on sorted keys in the pagination range
+		// Return actions based on sorted slice in the pagination range
 		actionsToReturn := make(map[string]*actions.Action)
-		for _, key := range keys[startIndex:endIndex] {
-			actionsToReturn[key] = app.ActionHandler.Actions[key]
+		for _, action := range actionsSlice[startIndex:endIndex] {
+			actionsToReturn[action.FileName] = action // Assuming FileName is the key
 		}
 
 		// Calculate total pages
-		totalActions := len(keys)
+		totalActions := len(actionsSlice)
 		totalPages := totalActions / ActionsPerPage
 		if totalActions%ActionsPerPage != 0 {
 			totalPages++
