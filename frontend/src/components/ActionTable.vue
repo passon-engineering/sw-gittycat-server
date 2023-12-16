@@ -55,17 +55,20 @@ export default defineComponent({
   },
   computed: {
     sortedActions() {
-      const sorted = Object.keys(this.actions).sort((a, b) => {
-        const actionA = this.actions[a][this.sortByColumn];
-        const actionB = this.actions[b][this.sortByColumn];
+      return this.actions.sort((a, b) => {
+      // Convert 'last_call' to Date objects for comparison
+      const dateA = new Date(a.last_call);
+      const dateB = new Date(b.last_call);
 
-        if (this.sortByColumn) {
-          return actionA < actionB ? -this.sortOrder : this.sortOrder;
-        }
-        return 0;
-      });
-
-      return sorted.map(key => this.actions[key]);
+      // Compare the dates for sorting
+      if (dateA < dateB) {
+        return this.sortOrder;
+      }
+      if (dateA > dateB) {
+        return -this.sortOrder;
+      }
+      return 0;
+    });
     },
   },
   methods: {
