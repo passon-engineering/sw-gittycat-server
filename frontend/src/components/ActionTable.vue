@@ -55,21 +55,13 @@ export default defineComponent({
   },
   computed: {
     sortedActions() {
-      return this.actions.sort((a, b) => {
-      // Convert 'last_call' to Date objects for comparison
-      const dateA = new Date(a.last_call);
-      const dateB = new Date(b.last_call);
-
-      // Compare the dates for sorting
-      if (dateA < dateB) {
-        return this.sortOrder;
-      }
-      if (dateA > dateB) {
-        return -this.sortOrder;
-      }
-      return 0;
-    });
-    },
+    return Object.values(this.actions)
+      .map(action => ({
+        ...action,
+        last_call: new Date(action.last_call) // Convert to Date object
+      }))
+      .sort((a, b) => b.last_call - a.last_call); // Sort in descending order
+  },
   },
   methods: {
     rerunAction(build_name) {
