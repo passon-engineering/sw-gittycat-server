@@ -24,8 +24,9 @@ type Application struct {
 }
 
 type Config struct {
-	HttpPort     string
-	WebDirectory string
+	WebInterfaceHttpPort string
+	WebhookHttpPort      string
+	WebDirectory         string
 }
 
 func Init() *Application {

@@ -15,12 +15,14 @@ import (
 
 var (
 	webhookDefinitionFilePath string
-	port                      int
+	webInterfaceHttpPort      int
+	webhookHttpPort           int
 )
 
 func init() {
-	flag.StringVar(&webhookDefinitionFilePath, "webhooks", "webhooks.yaml", "Path to the config file")
-	flag.IntVar(&port, "port", 3001, "Port to run the server on")
+	flag.StringVar(&webhookDefinitionFilePath, "webhookDefinitionFilePath", "webhooks.yaml", "Path to the config file")
+	flag.IntVar(&webInterfaceHttpPort, "webInterfaceHttpPort", 3001, "Port to run the web interface on")
+	flag.IntVar(&webhookHttpPort, "webhookHttpPort", 3002, "Port to listen for webhooks")
 	flag.Parse()
 }
 
@@ -82,7 +84,8 @@ func main() {
 
 	processor.Init(app)
 
-	app.Config.HttpPort = strconv.Itoa(port)
+	app.Config.WebInterfaceHttpPort = strconv.Itoa(webInterfaceHttpPort)
+	app.Config.WebhookHttpPort = strconv.Itoa(webhookHttpPort)
 	app.Config.WebDirectory = "/frontend/dist/"
 	webserver.Init(app)
 }

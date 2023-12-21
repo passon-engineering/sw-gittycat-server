@@ -12,35 +12,59 @@ import (
 )
 
 func Init(app *application.Application) {
-	router := mux.NewRouter()
+	// Main router for the first server
+	webInterfaceRouter := mux.NewRouter()
+	webInterfaceRouter.NotFoundHandler = http.HandlerFunc(handleRoot(app))
+	webInterfaceRouter.HandleFunc("/webhooks", handleWebhooks(app))
+	webInterfaceRouter.HandleFunc("/webhooks/refresh", handleWebhooksRefresh(app))
+	webInterfaceRouter.HandleFunc("/webhook/{build_name}/{operation}", handleWebhookRepoNameOperation(app))
+	webInterfaceRouter.HandleFunc("/repositories/stats", handleRepositoriesStats(app))
+	webInterfaceRouter.HandleFunc("/repositories/delete", handleRepositoriesDelete(app))
+	webInterfaceRouter.HandleFunc("/actions/{page}", handleActions(app))
+	webInterfaceRouter.HandleFunc("/actions/stats", handleActionsStats(app))
+	webInterfaceRouter.HandleFunc("/actions/delete", handleActionsDelete(app))
+	webInterfaceRouter.HandleFunc("/artifacts/delete", handleArtifactsDelete(app))
+	webInterfaceRouter.HandleFunc("/artifacts/stats", handleArtifactsStats(app))
 
-	server := http.Server{
-		Handler:      router,
-		Addr:         ":" + app.Config.HttpPort,
+	// Create the first server
+	mainServer := http.Server{
+		Handler:      webInterfaceRouter,
+		Addr:         ":" + app.Config.WebInterfaceHttpPort,
 		WriteTimeout: 10 * time.Second,
 		ReadTimeout:  10 * time.Second,
 	}
 
-	router.NotFoundHandler = http.HandlerFunc(handleRoot(app))
-	router.HandleFunc("/webhooks", handleWebhooks(app))
-	router.HandleFunc("/webhooks/refresh", handleWebhooksRefresh(app))
-	router.HandleFunc("/webhooks/{build_name}/{operation}", handleWebhooksRepoNameOperation(app))
-	router.HandleFunc("/repositories/stats", handleRepositoriesStats(app))
-	router.HandleFunc("/repositories/delete", handleRepositoriesDelete(app))
-	router.HandleFunc("/actions/{page}", handleActions(app))
-	router.HandleFunc("/actions/stats", handleActionsStats(app))
-	router.HandleFunc("/actions/delete", handleActionsDelete(app))
-	router.HandleFunc("/artifacts/delete", handleArtifactsDelete(app))
-	router.HandleFunc("/artifacts/stats", handleArtifactsStats(app))
+	go func() {
+		if err := mainServer.ListenAndServe(); err != nil {
+			app.Logger.Entry(logger.Container{
+				Status: logger.STATUS_ERROR,
+				Error:  "Could not initialize http server: " + err.Error(),
+			})
+			time.Sleep(2 * time.Second)
+			os.Exit(1)
+		}
+	}()
 
-	err := server.ListenAndServe()
-	if err != nil {
-		app.Logger.Entry(logger.Container{
-			Status: logger.STATUS_ERROR,
-			Error:  "Could not initialize http server: " + err.Error(),
-		})
-		time.Sleep(2 * time.Second)
-		os.Exit(1)
+	// Router for the webhook
+	webhookRouter := mux.NewRouter()
+	webhookRouter.HandleFunc("/webhook/{build_name}/{operation}", handleWebhook(app))
+
+	// Create the webhook server
+	webhookServer := http.Server{
+		Handler:      webhookRouter,
+		Addr:         ":" + app.Config.WebhookHttpPort,
+		WriteTimeout: 10 * time.Second,
+		ReadTimeout:  10 * time.Second,
 	}
 
+	go func() {
+		if err := webhookServer.ListenAndServe(); err != nil {
+			app.Logger.Entry(logger.Container{
+				Status: logger.STATUS_ERROR,
+				Error:  "Could not initialize http server: " + err.Error(),
+			})
+			time.Sleep(2 * time.Second)
+			os.Exit(1)
+		}
+	}()
 }
