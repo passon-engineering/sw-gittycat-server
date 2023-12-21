@@ -57,14 +57,12 @@ func Init(app *application.Application) {
 		ReadTimeout:  10 * time.Second,
 	}
 
-	go func() {
-		if err := webhookServer.ListenAndServe(); err != nil {
-			app.Logger.Entry(logger.Container{
-				Status: logger.STATUS_ERROR,
-				Error:  "Could not initialize http server: " + err.Error(),
-			})
-			time.Sleep(2 * time.Second)
-			os.Exit(1)
-		}
-	}()
+	if err := webhookServer.ListenAndServe(); err != nil {
+		app.Logger.Entry(logger.Container{
+			Status: logger.STATUS_ERROR,
+			Error:  "Could not initialize http server: " + err.Error(),
+		})
+		time.Sleep(2 * time.Second)
+		os.Exit(1)
+	}
 }
