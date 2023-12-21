@@ -8,7 +8,7 @@ import (
 	"github.com/passon-engineering/sw-go-logger-lib/logger"
 )
 
-func handleNotFound(app *application.Application) http.HandlerFunc {
+func handleWebhookNotFound(app *application.Application) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		startTime := time.Now()
 
@@ -18,9 +18,9 @@ func handleNotFound(app *application.Application) http.HandlerFunc {
 
 		// Log the not found event
 		app.Logger.Entry(logger.Container{
-			Status:         logger.STATUS_INFO,
+			Status:         logger.STATUS_WARN,
 			Source:         "handleNotFound",
-			Info:           "not found",
+			Info:           "Webhook: not found",
 			HttpRequest:    r,
 			ProcessingTime: time.Since(startTime),
 		})
