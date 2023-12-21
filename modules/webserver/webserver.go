@@ -47,6 +47,7 @@ func Init(app *application.Application) {
 
 	// Router for the webhook
 	webhookRouter := mux.NewRouter()
+	webhookRouter.NotFoundHandler = http.HandlerFunc(handleNotFound(app))
 	webhookRouter.HandleFunc("/webhook/{build_name}/{operation}", handleWebhook(app))
 
 	// Create the webhook server
